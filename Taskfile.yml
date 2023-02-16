@@ -1,0 +1,24 @@
+version: '3'
+
+dotenv: ['.env',]
+
+tasks:
+  run:
+    dir: './api'
+    cmds:
+      - docker-compose up -d db
+      - cp -n ../.env.example ../.env || true
+      - source ../.env
+      - go run ./main.go
+
+  db:
+    dir: '{{.USER_WORKING_DIR}}'
+    cmds:
+      - docker-compose up -d db && docker-compose exec db psql $POSTGRES_DB -U $POSTGRES_USER
+
+  dropdb:
+    dir: '{{.USER_WORKING_DIR}}'
+    cmds:
+      - docker-compose exec db psql postgres -U $POSTGRES_USER
+        -c "DROP DATABASE IF EXISTS $POSTGRES_DB;"
+        -c "CREATE DATABASE $POSTGRES_DB OWNER $POSTGRES_USER;"

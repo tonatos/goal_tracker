@@ -1,4 +1,4 @@
-module api/goal-tracker
+module goal-tracker/api
 
 go 1.19
 

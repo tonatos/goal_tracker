@@ -7,6 +7,7 @@ import (
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+	"gorm.io/gorm/schema"
 )
 
 type Config struct {
@@ -29,7 +30,12 @@ func GetConnectionString(config Config) string {
 }
 
 func Connect(connectionString string) (*gorm.DB, error) {
-	db, err := gorm.Open(postgres.Open(connectionString), &gorm.Config{})
+	db, err := gorm.Open(postgres.Open(connectionString), &gorm.Config{
+		NamingStrategy: schema.NamingStrategy{
+			NoLowerCase: false,
+		},
+	})
+
 	if err != nil {
 		return nil, err
 	}

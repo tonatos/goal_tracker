@@ -8,12 +8,33 @@
 ## Запуск
 ### В `Docker`:
 ```
+cp .env.example .env
 docker-compose up
 ```
 
 ### Запуск в режиме разработки:
+Back:
 ```
 docker-compose up -d db
-cd ./api && got run ./main.go # запуск серверной части
-cd ./web && npm run start # запуск фронт
+cp .env.example .env
+source .env
+cd ./api && go run ./main.go
 ```
+Либо: `task run`
+
+Front:
+```
+cd ./web && npm run start
+```
+
+## Task-runner
+В качестве task runner в проекте используется [go-task](https://taskfile.dev). [Установка](https://taskfile.dev/installation/) и использование:
+```
+brew install go-task
+task TASK_NAME
+```
+
+### Доступные команды
+* `run` запуск бекенда
+* `db` консоль базы данных
+* `drop_db` удаление базы данных
