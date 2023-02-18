@@ -6,8 +6,10 @@ import (
 	"strconv"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/swagger"
 
 	"goal-tracker/api/database"
+	_ "goal-tracker/api/docs"
 	"goal-tracker/api/handlers"
 )
 
@@ -30,32 +32,56 @@ func initDatabase() {
 	}
 
 	connectionString := database.GetConnectionString(config)
-	connection, err := database.Connect(connectionString)
+
+	var err error
+	database.DB, err = database.Connect(connectionString)
 	if err != nil {
 		panic(err.Error())
 	}
 
-	database.MigrateDB(connection)
+	database.MigrateDB(database.DB)
 }
 
 func initRoutes(app *fiber.App) {
 	api := app.Group("/api")
 
-	v1 := api.Group("/v1", func(c *fiber.Ctx) error {
-		return c.SendString("GoalTracker API v1")
-	})
+	v1 := api.Group("/v1")
+
 	v1.Get("/goal", handlers.GetGoals)
 	v1.Get("/goal/:id", handlers.GetGoal)
 	v1.Post("/goal", handlers.CreateGoal)
 	v1.Put("/goal/:id", handlers.UpdateGoal)
 	v1.Delete("/goal/:id", handlers.DeleteGoal)
 
-	v1.Get("/contribution", handlers.GetContributions)
-	v1.Post("/contribution", handlers.CreateContribution)
-	v1.Put("/contribution/:id", handlers.UpdateContribution)
-	v1.Delete("/contribution/:id", handlers.DeleteContribution)
+	v1.Get("/goal/:goal/contribution/", handlers.GetContributions)
+	v1.Post("/goal/:goal/contribution/", handlers.CreateContribution)
+	v1.Put("/goal/:goal/contribution/:id", handlers.UpdateContribution)
+	v1.Delete("/goal/:goal/contribution/:id", handlers.DeleteContribution)
+
+	v1.Get("/docs/*", swagger.New(swagger.Config{
+		DeepLinking:  true,
+		DocExpansion: "list",
+	}))
+
+	v1.Use(func(c *fiber.Ctx) error {
+		return c.Status(404).JSON(fiber.Map{
+			"code":    404,
+			"message": "404: Not Found",
+		})
+	})
 }
 
+// @title           GoalTracker API
+// @version         0.1
+// @description     API Service of simple app for tracking your widescale goals
+
+// @license.name  Apache 2.0
+// @license.url   http://www.apache.org/licenses/LICENSE-2.0.html
+
+// @host      localhost:3000
+// @BasePath  /api/v1
+
+// @securityDefinitions.basic  BasicAuth
 func main() {
 	app := fiber.New()
 

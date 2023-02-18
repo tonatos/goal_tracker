@@ -1,0 +1,298 @@
+basePath: /api/v1
+definitions:
+  database.Contribution:
+    properties:
+      amount:
+        type: number
+      created_at:
+        type: string
+      goal:
+        $ref: '#/definitions/database.Goal'
+      goal_id:
+        type: integer
+      id:
+        type: integer
+      updated_at:
+        type: string
+    type: object
+  database.Goal:
+    properties:
+      goal_amount:
+        type: number
+      id:
+        type: integer
+      name:
+        type: string
+      slug:
+        type: string
+      target_date:
+        type: string
+    type: object
+  handlers.ContributionRespones:
+    properties:
+      amount:
+        type: number
+      created_at:
+        type: string
+      id:
+        type: integer
+      updated_at:
+        type: string
+    type: object
+  utils.HTTPError:
+    properties:
+      code:
+        example: 400
+        type: integer
+      message:
+        example: status bad request
+        type: string
+    type: object
+  utils.JSONResult:
+    properties:
+      code:
+        type: integer
+      data: {}
+      message:
+        type: string
+    type: object
+host: localhost:3000
+info:
+  contact: {}
+  description: API Service of simple app for tracking your widescale goals
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  title: GoalTracker API
+  version: "0.1"
+paths:
+  /v1/goal:
+    get:
+      description: Get goals list
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/utils.JSONResult'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/database.Goal'
+                  type: array
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+      summary: Goals List
+      tags:
+      - Goals
+    post:
+      consumes:
+      - application/json
+      description: Create goal
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/utils.JSONResult'
+            - properties:
+                data:
+                  $ref: '#/definitions/database.Goal'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+      summary: Goal Create
+      tags:
+      - Goals
+  /v1/goal/:goal/contribution:
+    get:
+      description: Get contributions list
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/utils.JSONResult'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/handlers.ContributionRespones'
+                  type: array
+              type: object
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+      summary: Contribution List
+      tags:
+      - Contribution
+    post:
+      description: Create contribuitions
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/utils.JSONResult'
+            - properties:
+                data:
+                  $ref: '#/definitions/database.Contribution'
+              type: object
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+      summary: Contribution Create
+      tags:
+      - Contribution
+  /v1/goal/:goal/contribution/:id:
+    delete:
+      description: Delete contribution by id
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+      summary: Contribution Delete
+      tags:
+      - Contribution
+    put:
+      description: Update contributions by id
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/utils.JSONResult'
+            - properties:
+                data:
+                  $ref: '#/definitions/database.Contribution'
+              type: object
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+      summary: Contribution Update
+      tags:
+      - Contribution
+  /v1/goal/:id:
+    delete:
+      description: Delete goal by id
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+      summary: Goal Delete
+      tags:
+      - Goals
+    get:
+      description: Get goal by :id
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/utils.JSONResult'
+            - properties:
+                data:
+                  $ref: '#/definitions/database.Goal'
+              type: object
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+      summary: Goal Item
+      tags:
+      - Goals
+    put:
+      consumes:
+      - application/json
+      description: Update goal by id
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+      summary: Goal Update
+      tags:
+      - Goals
+securityDefinitions:
+  BasicAuth:
+    type: basic
+swagger: "2.0"

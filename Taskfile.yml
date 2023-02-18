@@ -9,6 +9,7 @@ tasks:
       - docker-compose up -d db
       - cp -n ../.env.example ../.env || true
       - source ../.env
+      - swag init
       - go run ./main.go
 
   db:
