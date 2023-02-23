@@ -1,14 +1,13 @@
 package handlers
 
 import (
-	"strconv"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
-	"gorm.io/gorm"
 
 	"goal-tracker/api/database"
 	"goal-tracker/api/handlers/helpers"
+	db_model "goal-tracker/api/models/db"
 	"goal-tracker/api/utils"
 )
 
@@ -34,8 +33,8 @@ func GetContributions(c *fiber.Ctx) error {
 	}
 
 	var contributions []ContributionRespones
-	query := database.Contribution{Goal: *goal}
-	database.DB.Model(&database.Contribution{}).Find(&contributions, query)
+	query := db_model.Contribution{Goal: *goal}
+	database.DB.Model(&db_model.Contribution{}).Find(&contributions, query)
 
 	return c.JSON(utils.JSONResult{
 		Code:    200,
@@ -48,7 +47,7 @@ func GetContributions(c *fiber.Ctx) error {
 // @Description  Create contribuitions
 // @Tags         Contribution
 // @Produce      json
-// @Success 	 200  {object}  utils.JSONResult{data=database.Contribution}
+// @Success 	 200  {object}  utils.JSONResult{data=db_model.Contribution}
 // @Failure      404  {object}  utils.HTTPError
 // @Failure      500  {object}  utils.HTTPError
 // @Router /v1/goal/:goal/contribution [post]
@@ -58,12 +57,12 @@ func CreateContribution(c *fiber.Ctx) error {
 		return utils.NewError(c, err.Code, err)
 	}
 
-	json := new(database.Contribution)
+	json := new(db_model.Contribution)
 	if err := c.BodyParser(json); err != nil {
 		return utils.NewError(c, 400, err)
 	}
 
-	newContriibution := database.Contribution{
+	newContriibution := db_model.Contribution{
 		GoalID: goal.ID,
 		Amount: json.Amount,
 	}
@@ -85,42 +84,28 @@ func CreateContribution(c *fiber.Ctx) error {
 // @Description  Update contributions by id
 // @Tags         Contribution
 // @Produce      json
-// @Success 	 200  {object}  utils.JSONResult{data=database.Contribution}
+// @Success 	 200  {object}  utils.JSONResult{data=db_model.Contribution}
 // @Failure      404  {object}  utils.HTTPError
 // @Failure      500  {object}  utils.HTTPError
 // @Router /v1/goal/:goal/contribution/:id [put]
 func UpdateContribution(c *fiber.Ctx) error {
-	_, http_err := helpers.GetGoalById(c, database.DB, c.Params("goal"))
+	contribution, http_err := helpers.GetContributionById(
+		c, database.DB, c.Params("goal"), c.Params("id"),
+	)
 	if http_err != nil {
 		return utils.NewError(c, http_err.Code, http_err)
 	}
 
-	id, err := strconv.Atoi(c.Params("id"))
-	if err != nil {
-		return utils.NewError(c, 400, utils.HTTPError{
-			Message: "Invalid id",
-		})
-	}
-
-	json := new(database.Contribution)
+	json := new(db_model.Contribution)
 	if err := c.BodyParser(json); err != nil {
 		return utils.NewError(c, 400, err)
 	}
-
-	var found database.Contribution
-	query := database.Contribution{ID: uint(id)}
-
-	if err := database.DB.Joins("Goal").First(&found, query).Error; err == gorm.ErrRecordNotFound {
-		return utils.NewError(c, 400, utils.HTTPError{
-			Message: "Can't find contribution with this id",
-		})
-	}
-	database.DB.Model(&found).Updates(json)
+	database.DB.Model(&contribution).Updates(json)
 
 	return c.JSON(utils.JSONResult{
 		Code:    200,
 		Message: "success",
-		Data:    found,
+		Data:    contribution,
 	})
 }
 
@@ -134,28 +119,13 @@ func UpdateContribution(c *fiber.Ctx) error {
 // @Failure      500  {object}  utils.HTTPError
 // @Router /v1/goal/:goal/contribution/:id [delete]
 func DeleteContribution(c *fiber.Ctx) error {
-	_, http_err := helpers.GetGoalById(c, database.DB, c.Params("goal"))
+	contribution, http_err := helpers.GetContributionById(
+		c, database.DB, c.Params("goal"), c.Params("id"),
+	)
 	if http_err != nil {
 		return utils.NewError(c, http_err.Code, http_err)
 	}
-
-	id, err := strconv.Atoi(c.Params("id"))
-	if err != nil {
-		return utils.NewError(c, 400, utils.HTTPError{
-			Message: "Invalid id",
-		})
-	}
-
-	var found database.Contribution
-	query := database.Contribution{ID: uint(id)}
-
-	if err := database.DB.First(&found, query).Error; err == gorm.ErrRecordNotFound {
-		return utils.NewError(c, 400, utils.HTTPError{
-			Message: "Can't find contribution with this id",
-		})
-	}
-
-	database.DB.Delete(&found)
+	database.DB.Delete(&contribution)
 	return c.JSON(utils.JSONResult{
 		Code:    200,
 		Message: "success",

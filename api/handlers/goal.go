@@ -1,13 +1,13 @@
 package handlers
 
 import (
-	"strconv"
-
 	"github.com/gofiber/fiber/v2"
-	"gorm.io/gorm"
 
 	"goal-tracker/api/database"
 	"goal-tracker/api/handlers/helpers"
+	db_model "goal-tracker/api/models/db"
+	response_model "goal-tracker/api/models/response"
+	"goal-tracker/api/services/auto_ru"
 	"goal-tracker/api/utils"
 )
 
@@ -15,19 +15,29 @@ import (
 // @Description  Get goals list
 // @Tags         Goals
 // @Produce      json
-// @Success 	 200  {object}  utils.JSONResult{data=[]database.Goal}
+// @Success 	 200  {object}  utils.JSONResult{data=[]db_model.Goal}
 // @Failure      500  {object}  utils.HTTPError
 // @Router /v1/goal [get]
 func GetGoal(c *fiber.Ctx) error {
-	goal, err := helpers.GetGoalById(c, database.DB, c.Params("goal"))
+	goal, err := helpers.GetGoalById(c, database.DB, c.Params("id"))
 	if err != nil {
 		return err
+	}
+
+	ar := auto_ru.AutoruInit(goal.GoalAmount)
+	ads_count, _ := ar.CountAds()
+	catalog_link, _ := ar.GetCatalogLink()
+
+	goal_response := response_model.Goal{
+		Goal:        goal,
+		CatalogUrl:  catalog_link,
+		AdsByAmount: ads_count,
 	}
 
 	return c.JSON(utils.JSONResult{
 		Code:    200,
 		Message: "success",
-		Data:    goal,
+		Data:    goal_response,
 	})
 }
 
@@ -35,12 +45,12 @@ func GetGoal(c *fiber.Ctx) error {
 // @Description  Get goal by :id
 // @Tags         Goals
 // @Produce      json
-// @Success 	 200  {object}  utils.JSONResult{data=database.Goal}
+// @Success 	 200  {object}  utils.JSONResult{data=db_model.Goal}
 // @Failure      404  {object}  utils.HTTPError
 // @Failure      500  {object}  utils.HTTPError
 // @Router /v1/goal/:id [get]
 func GetGoals(c *fiber.Ctx) error {
-	var goals []database.Goal
+	var goals []db_model.Goal
 	database.DB.Find(&goals)
 	return c.JSON(utils.JSONResult{
 		Code:    200,
@@ -54,17 +64,17 @@ func GetGoals(c *fiber.Ctx) error {
 // @Tags         Goals
 // @Accept       json
 // @Produce      json
-// @Success 	 200  {object}  utils.JSONResult{data=database.Goal}
+// @Success 	 200  {object}  utils.JSONResult{data=db_model.Goal}
 // @Failure      400  {object}  utils.HTTPError
 // @Failure      500  {object}  utils.HTTPError
 // @Router /v1/goal [post]
 func CreateGoal(c *fiber.Ctx) error {
-	json := new(database.Goal)
+	json := new(db_model.Goal)
 	if err := c.BodyParser(json); err != nil {
 		return utils.NewError(c, 400, err)
 	}
 
-	newGoal := database.Goal{
+	newGoal := db_model.Goal{
 		Name:       json.Name,
 		Slug:       utils.Slugificator(json.Name),
 		GoalAmount: json.GoalAmount,
@@ -93,34 +103,21 @@ func CreateGoal(c *fiber.Ctx) error {
 // @Failure      500  {object}  utils.HTTPError
 // @Router /v1/goal/:id [put]
 func UpdateGoal(c *fiber.Ctx) error {
-	json := new(database.Goal)
+	goal, err := helpers.GetGoalById(c, database.DB, c.Params("id"))
+	if err != nil {
+		return err
+	}
+
+	json := new(db_model.Goal)
 	if err := c.BodyParser(json); err != nil {
 		return utils.NewError(c, 400, err)
 	}
 
-	id, err := strconv.Atoi(c.Params("id"))
-	if err != nil {
-		return utils.NewError(c, 400, utils.HTTPError{
-			Message: "Invalid id",
-		})
-	}
-
-	var found database.Goal
-	query := database.Goal{ID: uint(id)}
-	err = database.DB.Preload("Goal").First(&found, query).Error
-
-	if err == gorm.ErrRecordNotFound {
-		return utils.NewError(c, 400, utils.HTTPError{
-			Message: "Can't find goal with this id",
-		})
-	}
-
-	database.DB.Model(&found).Updates(json)
-
+	database.DB.Model(&goal).Updates(json)
 	return c.JSON(utils.JSONResult{
 		Code:    200,
 		Message: "success",
-		Data:    found,
+		Data:    goal,
 	})
 }
 
@@ -134,7 +131,7 @@ func UpdateGoal(c *fiber.Ctx) error {
 // @Failure      500  {object}  utils.HTTPError
 // @Router /v1/goal/:id [delete]
 func DeleteGoal(c *fiber.Ctx) error {
-	goal, http_err := helpers.GetGoalById(c, database.DB, c.Params("goal"))
+	goal, http_err := helpers.GetGoalById(c, database.DB, c.Params("id"))
 	if http_err != nil {
 		return utils.NewError(c, http_err.Code, http_err)
 	}

@@ -57,12 +57,5 @@ func Connect(connectionString string) (*gorm.DB, error) {
 	return db, nil
 }
 
-func MigrateDB(connection *gorm.DB) error {
-	connection.AutoMigrate(&Goal{})
-	connection.AutoMigrate(&Contribution{})
-	log.Println("DB migrate successful!!")
-	return nil
-}
-
 // DB gorm connector
 var DB *gorm.DB

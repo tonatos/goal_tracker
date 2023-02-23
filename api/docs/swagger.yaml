@@ -1,13 +1,13 @@
 basePath: /api/v1
 definitions:
-  database.Contribution:
+  db.Contribution:
     properties:
       amount:
         type: number
       created_at:
         type: string
       goal:
-        $ref: '#/definitions/database.Goal'
+        $ref: '#/definitions/db.Goal'
       goal_id:
         type: integer
       id:
@@ -15,7 +15,7 @@ definitions:
       updated_at:
         type: string
     type: object
-  database.Goal:
+  db.Goal:
     properties:
       goal_amount:
         type: number
@@ -80,7 +80,7 @@ paths:
             - properties:
                 data:
                   items:
-                    $ref: '#/definitions/database.Goal'
+                    $ref: '#/definitions/db.Goal'
                   type: array
               type: object
         "500":
@@ -104,7 +104,7 @@ paths:
             - $ref: '#/definitions/utils.JSONResult'
             - properties:
                 data:
-                  $ref: '#/definitions/database.Goal'
+                  $ref: '#/definitions/db.Goal'
               type: object
         "400":
           description: Bad Request
@@ -157,7 +157,7 @@ paths:
             - $ref: '#/definitions/utils.JSONResult'
             - properties:
                 data:
-                  $ref: '#/definitions/database.Contribution'
+                  $ref: '#/definitions/db.Contribution'
               type: object
         "404":
           description: Not Found
@@ -207,7 +207,7 @@ paths:
             - $ref: '#/definitions/utils.JSONResult'
             - properties:
                 data:
-                  $ref: '#/definitions/database.Contribution'
+                  $ref: '#/definitions/db.Contribution'
               type: object
         "404":
           description: Not Found
@@ -257,7 +257,7 @@ paths:
             - $ref: '#/definitions/utils.JSONResult'
             - properties:
                 data:
-                  $ref: '#/definitions/database.Goal'
+                  $ref: '#/definitions/db.Goal'
               type: object
         "404":
           description: Not Found

@@ -43,7 +43,7 @@ const docTemplate = `{
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/database.Goal"
+                                                "$ref": "#/definitions/db.Goal"
                                             }
                                         }
                                     }
@@ -83,7 +83,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/database.Goal"
+                                            "$ref": "#/definitions/db.Goal"
                                         }
                                     }
                                 }
@@ -172,7 +172,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/database.Contribution"
+                                            "$ref": "#/definitions/db.Contribution"
                                         }
                                     }
                                 }
@@ -216,7 +216,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/database.Contribution"
+                                            "$ref": "#/definitions/db.Contribution"
                                         }
                                     }
                                 }
@@ -296,7 +296,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/database.Goal"
+                                            "$ref": "#/definitions/db.Goal"
                                         }
                                     }
                                 }
@@ -389,7 +389,7 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "database.Contribution": {
+        "db.Contribution": {
             "type": "object",
             "properties": {
                 "amount": {
@@ -399,7 +399,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "goal": {
-                    "$ref": "#/definitions/database.Goal"
+                    "$ref": "#/definitions/db.Goal"
                 },
                 "goal_id": {
                     "type": "integer"
@@ -412,7 +412,7 @@ const docTemplate = `{
                 }
             }
         },
-        "database.Goal": {
+        "db.Goal": {
             "type": "object",
             "properties": {
                 "goal_amount": {

@@ -1,4 +1,4 @@
-package database
+package db
 
 import (
 	"time"
@@ -6,17 +6,9 @@ import (
 	"gorm.io/gorm"
 )
 
-type Goal struct {
-	ID         uint      `gorm:"primaryKey"`
-	Name       string    `json:"name"`
-	Slug       string    `gorm:"unique" json:"slug"`
-	GoalAmount float32   `json:"goal_amount" sql:"type:decimal(10,2);"`
-	TargetDate time.Time `json:"target_date"`
-}
-
 type Contribution struct {
 	gorm.Model `json:"-"`
-	ID         uint      `gorm:"primaryKey"`
+	ID         uint      `gorm:"primaryKey" json:"id"`
 	GoalID     uint      `json:"goal_id"`
 	Goal       Goal      `json:"goal"`
 	Amount     float32   `json:"amount" sql:"type:decimal(10,2);"`
