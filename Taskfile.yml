@@ -6,11 +6,11 @@ tasks:
   run:
     dir: './api'
     cmds:
-      - docker-compose up -d db
       - cp -n ../.env.example ../.env || true
+      - docker-compose up -d db
       - source ../.env
       - swag init
-      - go run ./main.go
+      - air
 
   db:
     dir: '{{.USER_WORKING_DIR}}'
