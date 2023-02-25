@@ -6,11 +6,11 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"gorm.io/gorm"
 
-	db_model "goal-tracker/api/models/db"
+	"goal-tracker/api/models/table"
 	"goal-tracker/api/utils"
 )
 
-func GetGoalById(c *fiber.Ctx, db *gorm.DB, id string) (*db_model.Goal, *utils.HTTPError) {
+func GetGoalById(c *fiber.Ctx, db *gorm.DB, id string) (*table.Goal, *utils.HTTPError) {
 	intId, err := strconv.Atoi(id)
 	if err != nil {
 		return nil, &utils.HTTPError{
@@ -19,8 +19,8 @@ func GetGoalById(c *fiber.Ctx, db *gorm.DB, id string) (*db_model.Goal, *utils.H
 		}
 	}
 
-	var goal db_model.Goal
-	query := db_model.Goal{ID: uint(intId)}
+	var goal table.Goal
+	query := table.Goal{ID: uint(intId)}
 	err = db.First(&goal, query).Error
 
 	if err == gorm.ErrRecordNotFound {
@@ -33,7 +33,7 @@ func GetGoalById(c *fiber.Ctx, db *gorm.DB, id string) (*db_model.Goal, *utils.H
 }
 
 func GetContributionById(c *fiber.Ctx, db *gorm.DB, goal_id string, id string) (
-	*db_model.Contribution,
+	*table.Contribution,
 	*utils.HTTPError,
 ) {
 	_, http_err := GetGoalById(c, db, goal_id)
@@ -49,8 +49,8 @@ func GetContributionById(c *fiber.Ctx, db *gorm.DB, goal_id string, id string) (
 		}
 	}
 
-	var contrbution db_model.Contribution
-	query := db_model.Contribution{ID: uint(intId)}
+	var contrbution table.Contribution
+	query := table.Contribution{ID: uint(intId)}
 	err = db.Joins("Goal").First(&contrbution, query).Error
 	if err != nil {
 		return nil, &utils.HTTPError{

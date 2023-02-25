@@ -3,14 +3,14 @@ package database
 import (
 	"log"
 
-	"goal-tracker/api/models/db"
+	"goal-tracker/api/models/table"
 
 	"gorm.io/gorm"
 )
 
 func MigrateDB(connection *gorm.DB) error {
-	connection.AutoMigrate(&db.Goal{})
-	connection.AutoMigrate(&db.Contribution{})
+	connection.AutoMigrate(&table.Goal{})
+	connection.AutoMigrate(&table.Contribution{})
 
 	log.Println("DB migrate successful!!")
 	return nil

@@ -1,28 +1,22 @@
 package handlers
 
 import (
-	"time"
-
 	"github.com/gofiber/fiber/v2"
 
 	"goal-tracker/api/database"
 	"goal-tracker/api/handlers/helpers"
-	db_model "goal-tracker/api/models/db"
+	"goal-tracker/api/models/request"
+	"goal-tracker/api/models/response"
+	"goal-tracker/api/models/table"
 	"goal-tracker/api/utils"
 )
-
-type ContributionRespones struct {
-	Id        uint      `json:"id"`
-	Amount    float32   `json:"amount"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
-}
 
 // @Summary      Contribution List
 // @Description  Get contributions list
 // @Tags         Contribution
 // @Produce      json
-// @Success 	 200  {object}  utils.JSONResult{data=[]ContributionRespones}
+// @Param	  	 goal	path	int	true	"Goal ID for contribution"
+// @Success 	 200  {array}  utils.JSONResult{data=[]response.ResponesContribution}
 // @Failure      404  {object}  utils.HTTPError
 // @Failure      500  {object}  utils.HTTPError
 // @Router /v1/goal/:goal/contribution [get]
@@ -32,9 +26,9 @@ func GetContributions(c *fiber.Ctx) error {
 		return utils.NewError(c, err.Code, err)
 	}
 
-	var contributions []ContributionRespones
-	query := db_model.Contribution{Goal: *goal}
-	database.DB.Model(&db_model.Contribution{}).Find(&contributions, query)
+	var contributions []response.ResponesContribution
+	query := table.Contribution{Goal: *goal}
+	database.DB.Model(&table.Contribution{}).Find(&contributions, query)
 
 	return c.JSON(utils.JSONResult{
 		Code:    200,
@@ -47,7 +41,9 @@ func GetContributions(c *fiber.Ctx) error {
 // @Description  Create contribuitions
 // @Tags         Contribution
 // @Produce      json
-// @Success 	 200  {object}  utils.JSONResult{data=db_model.Contribution}
+// @Param	  	 goal	path	int	true	"Goal ID for contribution"
+// @Param        contribuition	body	request.RequestCreateContribution true "Contribution object for create"
+// @Success 	 200  {object}  utils.JSONResult{data=response.ResponesContribution}
 // @Failure      404  {object}  utils.HTTPError
 // @Failure      500  {object}  utils.HTTPError
 // @Router /v1/goal/:goal/contribution [post]
@@ -57,12 +53,12 @@ func CreateContribution(c *fiber.Ctx) error {
 		return utils.NewError(c, err.Code, err)
 	}
 
-	json := new(db_model.Contribution)
+	json := new(request.RequestCreateContribution)
 	if err := c.BodyParser(json); err != nil {
 		return utils.NewError(c, 400, err)
 	}
 
-	newContriibution := db_model.Contribution{
+	newContriibution := table.Contribution{
 		GoalID: goal.ID,
 		Amount: json.Amount,
 	}
@@ -71,12 +67,13 @@ func CreateContribution(c *fiber.Ctx) error {
 		return utils.NewError(c, 200, err)
 	}
 
-	database.DB.Joins("Goal").First(&newContriibution, newContriibution)
+	var result response.ResponesContribution
+	database.DB.Model(&table.Contribution{}).Joins("Goal").First(&result, newContriibution)
 
 	return c.JSON(utils.JSONResult{
 		Code:    200,
 		Message: "success",
-		Data:    newContriibution,
+		Data:    result,
 	})
 }
 
@@ -84,7 +81,10 @@ func CreateContribution(c *fiber.Ctx) error {
 // @Description  Update contributions by id
 // @Tags         Contribution
 // @Produce      json
-// @Success 	 200  {object}  utils.JSONResult{data=db_model.Contribution}
+// @Param	  	 goal	path	int	true	"Goal ID for contribution"
+// @Param	  	 id	path	int	true	"Contribution ID"
+// @Param        contribution	body	request.RequestUpdateContribution true "Contribution`s fields for update"
+// @Success 	 200  {object}  utils.JSONResult{data=response.ResponesContribution}
 // @Failure      404  {object}  utils.HTTPError
 // @Failure      500  {object}  utils.HTTPError
 // @Router /v1/goal/:goal/contribution/:id [put]
@@ -96,16 +96,19 @@ func UpdateContribution(c *fiber.Ctx) error {
 		return utils.NewError(c, http_err.Code, http_err)
 	}
 
-	json := new(db_model.Contribution)
-	if err := c.BodyParser(json); err != nil {
+	data := new(request.RequestUpdateContribution)
+	if err := c.BodyParser(data); err != nil {
 		return utils.NewError(c, 400, err)
 	}
-	database.DB.Model(&contribution).Updates(json)
+	database.DB.Model(&contribution).Updates(utils.StructToMap(data))
+
+	var result response.ResponesContribution
+	database.DB.Model(&table.Contribution{}).Joins("Goal").First(&result, contribution)
 
 	return c.JSON(utils.JSONResult{
 		Code:    200,
 		Message: "success",
-		Data:    contribution,
+		Data:    result,
 	})
 }
 
@@ -113,6 +116,8 @@ func UpdateContribution(c *fiber.Ctx) error {
 // @Description  Delete contribution by id
 // @Tags         Contribution
 // @Produce      json
+// @Param	  	 goal	path	int	true	"Goal ID for contribution"
+// @Param	  	 id	path	int	true	"Contribution ID"
 // @Success 	 200 {string} status "ok"
 // @Failure      400  {object}  utils.HTTPError
 // @Failure      404  {object}  utils.HTTPError

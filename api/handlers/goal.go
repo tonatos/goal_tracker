@@ -5,17 +5,19 @@ import (
 
 	"goal-tracker/api/database"
 	"goal-tracker/api/handlers/helpers"
-	db_model "goal-tracker/api/models/db"
-	response_model "goal-tracker/api/models/response"
+	"goal-tracker/api/models/request"
+	"goal-tracker/api/models/response"
+	"goal-tracker/api/models/table"
 	"goal-tracker/api/services/auto_ru"
 	"goal-tracker/api/utils"
 )
 
-// @Summary      Goals List
-// @Description  Get goals list
+// @Summary      Goals Item
+// @Description  Get goal by :id
 // @Tags         Goals
 // @Produce      json
-// @Success 	 200  {object}  utils.JSONResult{data=[]db_model.Goal}
+// @Param	  	 id	path	int	true	"Goal ID"
+// @Success 	 200  {array}  utils.JSONResult{data=[]response.ResponesGoal}
 // @Failure      500  {object}  utils.HTTPError
 // @Router /v1/goal [get]
 func GetGoal(c *fiber.Ctx) error {
@@ -28,7 +30,7 @@ func GetGoal(c *fiber.Ctx) error {
 	ads_count, _ := ar.CountAds()
 	catalog_link, _ := ar.GetCatalogLink()
 
-	goal_response := response_model.Goal{
+	goal_response := response.ResponesGoal{
 		Goal:        goal,
 		CatalogUrl:  catalog_link,
 		AdsByAmount: ads_count,
@@ -41,16 +43,16 @@ func GetGoal(c *fiber.Ctx) error {
 	})
 }
 
-// @Summary      Goal Item
-// @Description  Get goal by :id
+// @Summary      Goal List
+// @Description  Get goals list
 // @Tags         Goals
 // @Produce      json
-// @Success 	 200  {object}  utils.JSONResult{data=db_model.Goal}
+// @Success 	 200  {object}  utils.JSONResult{data=response.ResponesGoal}
 // @Failure      404  {object}  utils.HTTPError
 // @Failure      500  {object}  utils.HTTPError
 // @Router /v1/goal/:id [get]
 func GetGoals(c *fiber.Ctx) error {
-	var goals []db_model.Goal
+	var goals []table.Goal
 	database.DB.Find(&goals)
 	return c.JSON(utils.JSONResult{
 		Code:    200,
@@ -64,21 +66,22 @@ func GetGoals(c *fiber.Ctx) error {
 // @Tags         Goals
 // @Accept       json
 // @Produce      json
-// @Success 	 200  {object}  utils.JSONResult{data=db_model.Goal}
+// @Param        goal	body	request.RequestCreateGoal true "Goal object for create"
+// @Success 	 200  {object}  utils.JSONResult{data=response.ResponesGoal}
 // @Failure      400  {object}  utils.HTTPError
 // @Failure      500  {object}  utils.HTTPError
 // @Router /v1/goal [post]
 func CreateGoal(c *fiber.Ctx) error {
-	json := new(db_model.Goal)
-	if err := c.BodyParser(json); err != nil {
+	data := new(request.RequestCreateGoal)
+	if err := c.BodyParser(data); err != nil {
 		return utils.NewError(c, 400, err)
 	}
 
-	newGoal := db_model.Goal{
-		Name:       json.Name,
-		Slug:       utils.Slugificator(json.Name),
-		GoalAmount: json.GoalAmount,
-		TargetDate: json.TargetDate,
+	newGoal := table.Goal{
+		Name:       data.Name,
+		Slug:       utils.Slugificator(data.Name),
+		GoalAmount: data.GoalAmount,
+		TargetDate: data.TargetDate,
 	}
 
 	err := database.DB.Create(&newGoal).Error
@@ -86,10 +89,13 @@ func CreateGoal(c *fiber.Ctx) error {
 		return utils.NewError(c, 400, err)
 	}
 
+	var result response.ResponesGoal
+	database.DB.Model(&table.Goal{}).First(&result.Goal, newGoal)
+
 	return c.JSON(utils.JSONResult{
 		Code:    200,
 		Message: "success",
-		Data:    newGoal,
+		Data:    result,
 	})
 }
 
@@ -98,7 +104,9 @@ func CreateGoal(c *fiber.Ctx) error {
 // @Tags         Goals
 // @Accept       json
 // @Produce      json
-// @Success 	 200 {string} status "ok"
+// @Param	  	 id	path	int	true	"Goal ID"
+// @Param        goal	body	request.RequestUpdateGoal true "Goal`s fields for update"
+// @Success 	 200  {object}  utils.JSONResult{data=response.ResponesGoal}
 // @Failure      404  {object}  utils.HTTPError
 // @Failure      500  {object}  utils.HTTPError
 // @Router /v1/goal/:id [put]
@@ -108,16 +116,20 @@ func UpdateGoal(c *fiber.Ctx) error {
 		return err
 	}
 
-	json := new(db_model.Goal)
-	if err := c.BodyParser(json); err != nil {
+	data := new(request.RequestUpdateGoal)
+	if err := c.BodyParser(data); err != nil {
 		return utils.NewError(c, 400, err)
 	}
 
-	database.DB.Model(&goal).Updates(json)
+	database.DB.Model(&goal).Updates(utils.StructToMap(data))
+
+	var result response.ResponesGoal
+	database.DB.Model(&table.Goal{}).First(&result.Goal, goal)
+
 	return c.JSON(utils.JSONResult{
 		Code:    200,
 		Message: "success",
-		Data:    goal,
+		Data:    result,
 	})
 }
 
@@ -125,6 +137,7 @@ func UpdateGoal(c *fiber.Ctx) error {
 // @Description  Delete goal by id
 // @Tags         Goals
 // @Produce      json
+// @Param	  	 id	path	int	true	"Goal ID"
 // @Success 	 200 {string} status "ok"
 // @Failure      400  {object}  utils.HTTPError
 // @Failure      404  {object}  utils.HTTPError

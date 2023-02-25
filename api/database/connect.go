@@ -21,6 +21,16 @@ type Config struct {
 	Port       int64
 }
 
+func GetGormLogLevel(env string) logger.LogLevel {
+	if env == "prod" {
+		return logger.Error
+	} else if env == "stage" {
+		return logger.Warn
+	} else {
+		return logger.Info
+	}
+}
+
 func GetConnectionString(config Config) string {
 	return fmt.Sprintf(
 		"host=%s user=%s password=%s dbname=%s port=%s sslmode=disable TimeZone=Asia/Yekaterinburg",
@@ -32,14 +42,14 @@ func GetConnectionString(config Config) string {
 	)
 }
 
-func Connect(connectionString string) (*gorm.DB, error) {
+func Connect(connectionString string, env string) (*gorm.DB, error) {
 	newLogger := logger.New(
 		log.New(os.Stdout, "\r\n", log.LstdFlags), // io writer
 		logger.Config{
-			SlowThreshold:             time.Second, // Slow SQL threshold
-			LogLevel:                  logger.Info, // Log level
-			IgnoreRecordNotFoundError: true,        // Ignore ErrRecordNotFound error for logger
-			Colorful:                  true,        // Enable color
+			SlowThreshold:             time.Second,          // Slow SQL threshold
+			LogLevel:                  GetGormLogLevel(env), // Log level
+			IgnoreRecordNotFoundError: true,                 // Ignore ErrRecordNotFound error for logger
+			Colorful:                  true,                 // Enable color
 		},
 	)
 

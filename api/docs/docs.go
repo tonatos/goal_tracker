@@ -21,34 +21,46 @@ const docTemplate = `{
     "paths": {
         "/v1/goal": {
             "get": {
-                "description": "Get goals list",
+                "description": "Get goal by :id",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "Goals"
                 ],
-                "summary": "Goals List",
+                "summary": "Goals Item",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Goal ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/utils.JSONResult"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/definitions/db.Goal"
+                            "type": "array",
+                            "items": {
+                                "allOf": [
+                                    {
+                                        "$ref": "#/definitions/utils.JSONResult"
+                                    },
+                                    {
+                                        "type": "object",
+                                        "properties": {
+                                            "data": {
+                                                "type": "array",
+                                                "items": {
+                                                    "$ref": "#/definitions/response.ResponesGoal"
+                                                }
                                             }
                                         }
                                     }
-                                }
-                            ]
+                                ]
+                            }
                         }
                     },
                     "500": {
@@ -71,6 +83,17 @@ const docTemplate = `{
                     "Goals"
                 ],
                 "summary": "Goal Create",
+                "parameters": [
+                    {
+                        "description": "Goal object for create",
+                        "name": "goal",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.RequestCreateGoal"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -83,7 +106,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/db.Goal"
+                                            "$ref": "#/definitions/response.ResponesGoal"
                                         }
                                     }
                                 }
@@ -115,26 +138,38 @@ const docTemplate = `{
                     "Contribution"
                 ],
                 "summary": "Contribution List",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Goal ID for contribution",
+                        "name": "goal",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/utils.JSONResult"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/definitions/handlers.ContributionRespones"
+                            "type": "array",
+                            "items": {
+                                "allOf": [
+                                    {
+                                        "$ref": "#/definitions/utils.JSONResult"
+                                    },
+                                    {
+                                        "type": "object",
+                                        "properties": {
+                                            "data": {
+                                                "type": "array",
+                                                "items": {
+                                                    "$ref": "#/definitions/response.ResponesContribution"
+                                                }
                                             }
                                         }
                                     }
-                                }
-                            ]
+                                ]
+                            }
                         }
                     },
                     "404": {
@@ -160,6 +195,24 @@ const docTemplate = `{
                     "Contribution"
                 ],
                 "summary": "Contribution Create",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Goal ID for contribution",
+                        "name": "goal",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Contribution object for create",
+                        "name": "contribuition",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.RequestCreateContribution"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -172,7 +225,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/db.Contribution"
+                                            "$ref": "#/definitions/response.ResponesContribution"
                                         }
                                     }
                                 }
@@ -204,6 +257,31 @@ const docTemplate = `{
                     "Contribution"
                 ],
                 "summary": "Contribution Update",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Goal ID for contribution",
+                        "name": "goal",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Contribution ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Contribution` + "`" + `s fields for update",
+                        "name": "contribution",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.RequestUpdateContribution"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -216,7 +294,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/db.Contribution"
+                                            "$ref": "#/definitions/response.ResponesContribution"
                                         }
                                     }
                                 }
@@ -246,6 +324,22 @@ const docTemplate = `{
                     "Contribution"
                 ],
                 "summary": "Contribution Delete",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Goal ID for contribution",
+                        "name": "goal",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Contribution ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "ok",
@@ -276,14 +370,14 @@ const docTemplate = `{
         },
         "/v1/goal/:id": {
             "get": {
-                "description": "Get goal by :id",
+                "description": "Get goals list",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "Goals"
                 ],
-                "summary": "Goal Item",
+                "summary": "Goal List",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -296,7 +390,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/db.Goal"
+                                            "$ref": "#/definitions/response.ResponesGoal"
                                         }
                                     }
                                 }
@@ -329,11 +423,41 @@ const docTemplate = `{
                     "Goals"
                 ],
                 "summary": "Goal Update",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Goal ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Goal` + "`" + `s fields for update",
+                        "name": "goal",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.RequestUpdateGoal"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
-                        "description": "ok",
+                        "description": "OK",
                         "schema": {
-                            "type": "string"
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/utils.JSONResult"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/response.ResponesGoal"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     },
                     "404": {
@@ -359,6 +483,15 @@ const docTemplate = `{
                     "Goals"
                 ],
                 "summary": "Goal Delete",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Goal ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "ok",
@@ -389,7 +522,51 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "db.Contribution": {
+        "request.RequestCreateContribution": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "number"
+                }
+            }
+        },
+        "request.RequestCreateGoal": {
+            "type": "object",
+            "properties": {
+                "goal_amount": {
+                    "type": "number"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "target_date": {
+                    "type": "string"
+                }
+            }
+        },
+        "request.RequestUpdateContribution": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "number"
+                }
+            }
+        },
+        "request.RequestUpdateGoal": {
+            "type": "object",
+            "properties": {
+                "goal_amount": {
+                    "type": "number"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "target_date": {
+                    "type": "string"
+                }
+            }
+        },
+        "response.ResponesContribution": {
             "type": "object",
             "properties": {
                 "amount": {
@@ -397,12 +574,6 @@ const docTemplate = `{
                 },
                 "created_at": {
                     "type": "string"
-                },
-                "goal": {
-                    "$ref": "#/definitions/db.Goal"
-                },
-                "goal_id": {
-                    "type": "integer"
                 },
                 "id": {
                     "type": "integer"
@@ -412,9 +583,15 @@ const docTemplate = `{
                 }
             }
         },
-        "db.Goal": {
+        "response.ResponesGoal": {
             "type": "object",
             "properties": {
+                "ads_by_amount": {
+                    "type": "integer"
+                },
+                "catalog_url": {
+                    "type": "string"
+                },
                 "goal_amount": {
                     "type": "number"
                 },
@@ -428,23 +605,6 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "target_date": {
-                    "type": "string"
-                }
-            }
-        },
-        "handlers.ContributionRespones": {
-            "type": "object",
-            "properties": {
-                "amount": {
-                    "type": "number"
-                },
-                "created_at": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "updated_at": {
                     "type": "string"
                 }
             }

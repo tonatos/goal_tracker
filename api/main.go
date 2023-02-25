@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"strconv"
@@ -11,15 +12,18 @@ import (
 	"goal-tracker/api/database"
 	_ "goal-tracker/api/docs"
 	"goal-tracker/api/handlers"
+	"goal-tracker/api/utils"
 )
 
-func dbPortFronEnv() int64 {
-	db_port, err := strconv.ParseInt(os.Getenv("POSTGRES_PORT"), 0, 64)
-	if db_port == 0 || err == nil {
-		db_port = 5432
+func getEnv() string {
+	var env string
+	switch os.Getenv("ENV") {
+	case "prod", "stage":
+		env = "prod"
+	default:
+		env = "dev"
 	}
-	log.Println("DB port is", db_port)
-	return db_port
+	return env
 }
 
 func initDatabase() {
@@ -28,13 +32,21 @@ func initDatabase() {
 		User:       os.Getenv("POSTGRES_USER"),
 		Password:   os.Getenv("POSTGRES_PASSWORD"),
 		DB:         os.Getenv("POSTGRES_DB"),
-		Port:       dbPortFronEnv(),
+		Port: func() int64 {
+			db_port, err := strconv.ParseInt(
+				utils.GetEnvWithDefault("POSTGRES_PORT", "5432"), 0, 64,
+			)
+			if db_port == 0 || err != nil {
+				return 5432
+			}
+			return db_port
+		}(),
 	}
 
 	connectionString := database.GetConnectionString(config)
 
 	var err error
-	database.DB, err = database.Connect(connectionString)
+	database.DB, err = database.Connect(connectionString, getEnv())
 	if err != nil {
 		panic(err.Error())
 	}
@@ -90,6 +102,9 @@ func main() {
 
 	// initialize routes
 	initRoutes(app)
-
-	log.Fatal(app.Listen(":3000"))
+	log.Fatal(
+		app.Listen(
+			fmt.Sprintf(":%s", utils.GetEnvWithDefault("APP_PORT", "8000")),
+		),
+	)
 }
