@@ -17,7 +17,7 @@ type AutoRUApi struct {
 	Headers map[string]string
 }
 
-func (api *AutoRUApi) request(method string, url *url.URL, data io.Reader) ([]byte, error) {
+func (api *AutoRUApi) Request(method string, url *url.URL, data io.Reader) ([]byte, error) {
 	req, err := http.NewRequest(method, url.String(), data)
 	if err != nil {
 		log.SetPrefix("[ERROR] ")
@@ -71,9 +71,9 @@ func (api *AutoRUApi) BuildURL(urlName string) *url.URL {
 }
 
 func (api *AutoRUApi) Post(url *url.URL, data []byte) ([]byte, error) {
-	return api.request(http.MethodPost, url, bytes.NewBuffer(data))
+	return api.Request(http.MethodPost, url, bytes.NewBuffer(data))
 }
 
 func (api *AutoRUApi) Get(url *url.URL) ([]byte, error) {
-	return api.request(http.MethodGet, url, nil)
+	return api.Request(http.MethodGet, url, nil)
 }

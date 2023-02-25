@@ -12,6 +12,10 @@ tasks:
       - swag init -g ./cmd/main/main.go --dir ./ --output ./docs
       - air
 
+  test:
+    cmds:
+      - go test -v ./test/... -count=1
+
   db:
     dir: '{{.USER_WORKING_DIR}}'
     cmds:
@@ -20,6 +24,8 @@ tasks:
   dropdb:
     dir: '{{.USER_WORKING_DIR}}'
     cmds:
+      - docker-compose up -d db 
       - docker-compose exec db psql postgres -U $POSTGRES_USER
         -c "DROP DATABASE IF EXISTS $POSTGRES_DB;"
         -c "CREATE DATABASE $POSTGRES_DB OWNER $POSTGRES_USER;"
+      - docker-compose stop db
