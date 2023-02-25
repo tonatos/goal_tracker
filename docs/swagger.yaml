@@ -41,10 +41,14 @@ definitions:
     type: object
   response.ResponesGoal:
     properties:
+      accumulated_amount:
+        type: number
       ads_by_amount:
         type: integer
       catalog_url:
         type: string
+      days_until_bang:
+        type: integer
       goal_amount:
         type: number
       id:

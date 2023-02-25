@@ -5,7 +5,6 @@ import (
 	"crypto/tls"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"log"
 	"net/http"
 	"net/url"
@@ -56,7 +55,7 @@ func (api *AutoRUApi) request(method string, url *url.URL, data io.Reader) ([]by
 	}
 	defer res.Body.Close()
 
-	body, err := ioutil.ReadAll(res.Body)
+	body, err := io.ReadAll(res.Body)
 	if err != nil {
 		log.SetPrefix("[ERROR] ")
 		log.Printf("Client: could not read request body: %s\n", err)

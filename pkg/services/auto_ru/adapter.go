@@ -90,7 +90,7 @@ func (ar *AutoRU) GetCatalogLink() (string, error) {
 	for i := 0; i < values.NumField(); i++ {
 		name := types.Field(i).Tag.Get("json")
 		value := values.Field(i).Interface()
-		switch value.(type) {
+		switch v := value.(type) {
 		case string:
 			params.Add(name, value.(string))
 		case int:
@@ -107,7 +107,7 @@ func (ar *AutoRU) GetCatalogLink() (string, error) {
 				)
 			}
 		default:
-			break
+			log.Printf("[WARN] Value %s %+v can't converted\n", name, v)
 		}
 
 	}
