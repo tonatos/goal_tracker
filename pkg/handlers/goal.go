@@ -1,6 +1,8 @@
 package handlers
 
 import (
+	"time"
+
 	"github.com/gofiber/fiber/v2"
 
 	"github.com/tonatos/goal-tracker/pkg/database"
@@ -26,14 +28,19 @@ func GetGoal(c *fiber.Ctx) error {
 		return err
 	}
 
-	ar := auto_ru.AutoruInit(goal.GoalAmount)
+	// @todo: считать накопления, а не передавать сумму
+	accumulatedAmount := goal.GoalAmount
+
+	ar := auto_ru.AutoruInit(accumulatedAmount)
 	ads_count, _ := ar.CountAds()
 	catalog_link, _ := ar.GetCatalogLink()
 
 	goal_response := response.ResponesGoal{
-		Goal:        goal,
-		CatalogUrl:  catalog_link,
-		AdsByAmount: ads_count,
+		Goal:              goal,
+		CatalogUrl:        catalog_link,
+		AdsByAmount:       ads_count,
+		AccumulatedAmount: accumulatedAmount,
+		DaysUntilBang:     int(goal.TargetDate.Sub(time.Now()).Hours() / 24),
 	}
 
 	return c.JSON(utils.JSONResult{

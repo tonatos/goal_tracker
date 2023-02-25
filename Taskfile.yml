@@ -7,7 +7,7 @@ tasks:
     dir: './'
     cmds:
       - cp -n .env.example .env || true
-      - docker-compose up -d db
+      - docker-compose up -d db redis
       - source .env
       - swag init -g ./cmd/main/main.go --dir ./ --output ./docs
       - air

@@ -1,14 +1,17 @@
 package response
 
 import (
-	"github.com/tonatos/goal-tracker/pkg/models/table"
 	"time"
+
+	"github.com/tonatos/goal-tracker/pkg/models/table"
 )
 
 type ResponesGoal struct {
 	*table.Goal
-	CatalogUrl  string `json:"catalog_url"`
-	AdsByAmount int    `json:"ads_by_amount"`
+	AccumulatedAmount float32 `json:"accumulated_amount"`
+	CatalogUrl        string  `json:"catalog_url"`
+	AdsByAmount       int     `json:"ads_by_amount"`
+	DaysUntilBang     int     `json:"days_until_bang"`
 }
 
 type ResponesContribution struct {

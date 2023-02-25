@@ -27,7 +27,7 @@ func getEnv() string {
 }
 
 func initDatabase() {
-	config := database.Config{
+	config := database.PostgresConfig{
 		ServerName: os.Getenv("POSTGRES_HOST"),
 		User:       os.Getenv("POSTGRES_USER"),
 		Password:   os.Getenv("POSTGRES_PASSWORD"),
@@ -46,12 +46,27 @@ func initDatabase() {
 	connectionString := database.GetConnectionString(config)
 
 	var err error
-	database.DB, err = database.Connect(connectionString, getEnv())
+	database.DB, err = database.ConnectPostgres(connectionString, getEnv())
 	if err != nil {
 		panic(err.Error())
 	}
 
 	database.MigrateDB(database.DB)
+}
+
+func initRedis() {
+	config := database.ConfigRedis{
+		ServerName: os.Getenv("REDIS_HOST"),
+		Port:       os.Getenv("REDIS_PORT"),
+		Password:   "",
+		DB:         0,
+	}
+
+	var err error
+	database.Redis, err = database.ConnectRedis(&config)
+	if err != nil {
+		panic(err.Error())
+	}
 }
 
 func initRoutes(app *fiber.App) {
@@ -99,6 +114,9 @@ func main() {
 
 	// initialize database
 	initDatabase()
+
+	// init redis
+	initRedis()
 
 	// initialize routes
 	initRoutes(app)

@@ -13,7 +13,7 @@ import (
 	"gorm.io/gorm/schema"
 )
 
-type Config struct {
+type PostgresConfig struct {
 	ServerName string
 	User       string
 	Password   string
@@ -31,7 +31,7 @@ func GetGormLogLevel(env string) logger.LogLevel {
 	}
 }
 
-func GetConnectionString(config Config) string {
+func GetConnectionString(config PostgresConfig) string {
 	return fmt.Sprintf(
 		"host=%s user=%s password=%s dbname=%s port=%s sslmode=disable TimeZone=Asia/Yekaterinburg",
 		config.ServerName,
@@ -42,7 +42,7 @@ func GetConnectionString(config Config) string {
 	)
 }
 
-func Connect(connectionString string, env string) (*gorm.DB, error) {
+func ConnectPostgres(connectionString string, env string) (*gorm.DB, error) {
 	newLogger := logger.New(
 		log.New(os.Stdout, "\r\n", log.LstdFlags), // io writer
 		logger.Config{

@@ -7,6 +7,7 @@ type AutoRUCountAdsRequest struct {
 	Category      string              `json:"category"`
 	GeoRadius     int                 `json:"geo_radius"`
 	GeoID         int                 `json:"geo_id"`
+	PriceTo       float32             `json:"price_to"`
 }
 
 type AutoRUCountAdsResponse struct {

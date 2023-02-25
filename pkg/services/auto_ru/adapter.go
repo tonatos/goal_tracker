@@ -3,11 +3,16 @@ package auto_ru
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/tonatos/goal-tracker/pkg/services"
+	"log"
 	"net/url"
 	"os"
 	"reflect"
 	"strconv"
+	"time"
+
+	"github.com/tonatos/goal-tracker/pkg/database"
+	"github.com/tonatos/goal-tracker/pkg/services"
+	"github.com/tonatos/goal-tracker/pkg/utils"
 )
 
 type AutoRUApiURLs struct {
@@ -28,6 +33,24 @@ func (ar *AutoRU) Auth() error {
 }
 
 func (ar *AutoRU) CountAds() (int, error) {
+	// Redis key format: `ads:amount__geo_id__radius:count`
+	key := utils.CreateRedisKey(
+		"ads",
+		fmt.Sprintf(
+			"%.0f__%d__%d",
+			ar.FilterParams.PriceTo,
+			ar.FilterParams.GeoID,
+			ar.FilterParams.GeoRadius,
+		),
+		"count",
+	)
+	redis_val, err := database.Redis.Get(key).Result()
+	if err == nil {
+		res, _ := strconv.ParseInt(redis_val, 10, 32)
+		log.Printf("[INFO] Use cached ads counter (%s): %d", database.Redis.TTL(key), res)
+		return int(res), nil
+	}
+
 	jsonBody, _ := json.Marshal(ar.FilterParams)
 	data, err := ar.Api.Post(ar.Api.BuildURL(ar.Urls.ApiAdsCount), jsonBody)
 
@@ -48,6 +71,11 @@ func (ar *AutoRU) CountAds() (int, error) {
 			count = countByRegion.Count
 		}
 	}
+
+	err = database.Redis.Set(key, count, time.Second*60*60*6).Err()
+	if err != nil {
+		return 0, err
+	}
 	return count, nil
 }
 
@@ -67,6 +95,8 @@ func (ar *AutoRU) GetCatalogLink() (string, error) {
 			params.Add(name, value.(string))
 		case int:
 			params.Add(name, strconv.Itoa(value.(int)))
+		case float32:
+			params.Add(name, fmt.Sprintf("%.0f", value.(float32)))
 		case bool:
 			params.Add(name, strconv.FormatBool(value.(bool)))
 		case []map[string]string:
@@ -99,8 +129,9 @@ func AutoruInit(goal_amount float32) *AutoRU {
 			WithDiscount: false,
 			Section:      "used",
 			Category:     "cars",
-			GeoRadius:    200,
+			GeoRadius:    1000,
 			GeoID:        54,
+			PriceTo:      goal_amount,
 			CatalogFilter: []map[string]string{
 				{"mark": "CHEVROLET", "model": "CAMARO"},
 				{"mark": "FORD", "model": "MUSTANG"},
