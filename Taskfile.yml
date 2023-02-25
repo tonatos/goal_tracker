@@ -4,12 +4,12 @@ dotenv: ['.env',]
 
 tasks:
   run:
-    dir: './api'
+    dir: './'
     cmds:
-      - cp -n ../.env.example ../.env || true
+      - cp -n .env.example .env || true
       - docker-compose up -d db
-      - source ../.env
-      - swag init
+      - source .env
+      - swag init -g ./cmd/main/main.go --dir ./ --output ./docs
       - air
 
   db:

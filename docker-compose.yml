@@ -10,8 +10,8 @@ services:
 
   api:
     build:
-      context: ./api
-      dockerfile: Dockerfile
+      context: ./
+      dockerfile: ./build/Dockerfile.back
     env_file:
       - .env
     environment:

@@ -1,8 +1,8 @@
 # GoalTracker
 
 Простой учебный pet-проект на `go` и `React`. Структура:
-* `./api` — бек
-* `./web` — фронт
+* `./pkg` — бек
+* `./website` — фронт
 
 ## Конфигурация
 Для начала, необходим сделать `.env` файл:
@@ -23,18 +23,18 @@ docker-compose up
 ```sh
 docker-compose up -d db
 source .env
-cd ./api && air
+cd ./pkg && air
 ```
 Либо: `task run`
 
 Генерация/актуализация swagger-документации
 ```
-swag init
+swag init -g ./cmd/main/main.go --dir ./ --output ./docs
 ```
 
 **Front:**
 ```sh
-cd ./web && npm run start
+cd ./website && npm run start
 ```
 
 ## Task-runner
@@ -52,7 +52,7 @@ task TASK_NAME
 ## @todo
 - [x] Прикрутить релоадер для режима разработки
 - [x] Напиcать докер-файлы
-- [ ] Сделать отделные модели для request/response
+- [x] Сделать отделные модели для request/response
 - [ ] Привести структуру проекта в привычную для go
-- [ ] Прикрутить редис и кешировать счетчик там
+- [ ] Прикрутить редис и кешировать счетчик там 
 - [ ] Написать тесты
