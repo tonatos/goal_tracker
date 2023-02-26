@@ -28,10 +28,16 @@ func GetGoal(c *fiber.Ctx) error {
 		return err
 	}
 
-	// @todo: считать накопления, а не передавать сумму
-	accumulatedAmount := goal.GoalAmount
+	var accumulatedAmount struct {
+		Sum float32 `gorm:"sum"`
+	}
+	database.DB.Model(table.Contribution{}).Select(
+		"sum(amount) as sum",
+	).Find(
+		&accumulatedAmount, table.Contribution{GoalID: goal.ID},
+	)
 
-	ar := auto_ru.AutoruInit(accumulatedAmount)
+	ar := auto_ru.AutoruInit(goal.GoalAmount, accumulatedAmount.Sum)
 	ads_count, _ := ar.CountAds()
 	catalog_link, _ := ar.GetCatalogLink()
 
@@ -39,8 +45,8 @@ func GetGoal(c *fiber.Ctx) error {
 		Goal:              goal,
 		CatalogUrl:        catalog_link,
 		AdsByAmount:       ads_count,
-		AccumulatedAmount: accumulatedAmount,
-		DaysUntilBang:     int(goal.TargetDate.Sub(time.Now()).Hours() / 24),
+		AccumulatedAmount: accumulatedAmount.Sum,
+		DaysUntilBang:     int(time.Until(goal.TargetDate).Hours() / 24),
 	}
 
 	return c.JSON(utils.JSONResult{

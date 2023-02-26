@@ -115,7 +115,7 @@ func (ar *AutoRU) GetCatalogLink() (string, error) {
 	return baseUrl.String(), nil
 }
 
-func AutoruInit(goal_amount float32) *AutoRU {
+func AutoruInit(goal_amount, accumulatedAmount float32) *AutoRU {
 	cookie := os.Getenv("APP_AUTORU_COOKIE")
 
 	return &AutoRU{
