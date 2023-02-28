@@ -10,8 +10,8 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/tonatos/goal-tracker/internal/services"
 	"github.com/tonatos/goal-tracker/pkg/database"
-	"github.com/tonatos/goal-tracker/pkg/services"
 	"github.com/tonatos/goal-tracker/pkg/utils"
 )
 

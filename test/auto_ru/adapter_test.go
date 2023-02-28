@@ -4,8 +4,8 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/tonatos/goal-tracker/pkg/services"
-	"github.com/tonatos/goal-tracker/pkg/services/auto_ru"
+	"github.com/tonatos/goal-tracker/internal/services"
+	"github.com/tonatos/goal-tracker/internal/services/auto_ru"
 )
 
 func TestAutoRU_GetCatalogLink(t *testing.T) {
@@ -80,7 +80,8 @@ func TestAutoRU_CountAds(t *testing.T) {
 
 func TestAutoruInit(t *testing.T) {
 	type args struct {
-		goal_amount float32
+		accumulated_sum float32
+		goal_amount     float32
 	}
 	tests := []struct {
 		name string
@@ -91,7 +92,7 @@ func TestAutoruInit(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := auto_ru.AutoruInit(tt.args.goal_amount); !reflect.DeepEqual(got, tt.want) {
+			if got := auto_ru.AutoruInit(tt.args.goal_amount, tt.args.accumulated_sum); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("AutoruInit() = %v, want %v", got, tt.want)
 			}
 		})

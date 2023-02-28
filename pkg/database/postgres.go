@@ -22,7 +22,7 @@ type PostgresConfig struct {
 }
 
 func GetGormLogLevel(env string) logger.LogLevel {
-	if env == "prod" {
+	if env == "prod" || env == "test" {
 		return logger.Error
 	} else if env == "stage" {
 		return logger.Warn
@@ -33,11 +33,17 @@ func GetGormLogLevel(env string) logger.LogLevel {
 
 func GetConnectionString(config PostgresConfig) string {
 	return fmt.Sprintf(
-		"host=%s user=%s password=%s dbname=%s port=%s sslmode=disable TimeZone=Asia/Yekaterinburg",
+		"host=%s user=%s password=%s %s port=%s sslmode=disable TimeZone=Asia/Yekaterinburg",
 		config.ServerName,
 		config.User,
 		config.Password,
-		config.DB,
+		func(dbname string) string {
+			if dbname != "" {
+				return fmt.Sprintf("dbname=%s", config.DB)
+			} else {
+				return ""
+			}
+		}(config.DB),
 		strconv.FormatInt(config.Port, 10),
 	)
 }

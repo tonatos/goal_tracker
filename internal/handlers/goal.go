@@ -5,12 +5,12 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 
+	"github.com/tonatos/goal-tracker/internal/handlers/helpers"
+	"github.com/tonatos/goal-tracker/internal/models/request"
+	"github.com/tonatos/goal-tracker/internal/models/response"
+	"github.com/tonatos/goal-tracker/internal/models/table"
+	"github.com/tonatos/goal-tracker/internal/services/auto_ru"
 	"github.com/tonatos/goal-tracker/pkg/database"
-	"github.com/tonatos/goal-tracker/pkg/handlers/helpers"
-	"github.com/tonatos/goal-tracker/pkg/models/request"
-	"github.com/tonatos/goal-tracker/pkg/models/response"
-	"github.com/tonatos/goal-tracker/pkg/models/table"
-	"github.com/tonatos/goal-tracker/pkg/services/auto_ru"
 	"github.com/tonatos/goal-tracker/pkg/utils"
 )
 

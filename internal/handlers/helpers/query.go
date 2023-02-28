@@ -6,7 +6,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"gorm.io/gorm"
 
-	"github.com/tonatos/goal-tracker/pkg/models/table"
+	"github.com/tonatos/goal-tracker/internal/models/table"
 	"github.com/tonatos/goal-tracker/pkg/utils"
 )
 

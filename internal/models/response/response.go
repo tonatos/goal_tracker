@@ -3,7 +3,7 @@ package response
 import (
 	"time"
 
-	"github.com/tonatos/goal-tracker/pkg/models/table"
+	"github.com/tonatos/goal-tracker/internal/models/table"
 )
 
 type ResponesGoal struct {

@@ -1,9 +1,9 @@
-package database
+package app
 
 import (
 	"log"
 
-	"github.com/tonatos/goal-tracker/pkg/models/table"
+	"github.com/tonatos/goal-tracker/internal/models/table"
 
 	"gorm.io/gorm"
 )

@@ -6,7 +6,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/tonatos/goal-tracker/pkg/services/auto_ru"
+	"github.com/tonatos/goal-tracker/internal/services/auto_ru"
 )
 
 func TestAutoRUApi_request(t *testing.T) {
