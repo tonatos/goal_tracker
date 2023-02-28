@@ -21,6 +21,14 @@ type PostgresConfig struct {
 	Port       int64
 }
 
+func GetPostgresPort(port string) int64 {
+	db_port, err := strconv.ParseInt(port, 0, 64)
+	if db_port == 0 || err != nil {
+		return 5432
+	}
+	return db_port
+}
+
 func GetGormLogLevel(env string) logger.LogLevel {
 	if env == "prod" || env == "test" {
 		return logger.Error

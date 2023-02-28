@@ -4,6 +4,8 @@ definitions:
     properties:
       amount:
         type: number
+    required:
+    - amount
     type: object
   request.RequestCreateGoal:
     properties:
@@ -13,11 +15,17 @@ definitions:
         type: string
       target_date:
         type: string
+    required:
+    - goal_amount
+    - name
+    - target_date
     type: object
   request.RequestUpdateContribution:
     properties:
       amount:
         type: number
+    required:
+    - amount
     type: object
   request.RequestUpdateGoal:
     properties:

@@ -3,7 +3,6 @@ package app
 import (
 	"fmt"
 	"os"
-	"strconv"
 
 	"github.com/gofiber/fiber/v2"
 
@@ -14,24 +13,16 @@ import (
 
 func initDatabase() {
 	config := database.PostgresConfig{
-		ServerName: os.Getenv("POSTGRES_HOST"),
-		User:       os.Getenv("POSTGRES_USER"),
-		Password:   os.Getenv("POSTGRES_PASSWORD"),
+		ServerName: utils.GetEnvWithDefault("POSTGRES_HOST", "localhost"),
+		User:       utils.GetEnvWithDefault("POSTGRES_USER", "postgres"),
+		Password:   utils.GetEnvWithDefault("POSTGRES_PASSWORD", "postgres"),
+		Port:       database.GetPostgresPort(utils.GetEnvWithDefault("POSTGRES_PORT", "5432")),
 		DB: func() string {
 			if utils.GetCurrentEnv() == "test" {
 				return fmt.Sprintf("%s_test", utils.GetEnvWithDefault("POSTGRES_DB", "postgres"))
 			} else {
 				return os.Getenv("POSTGRES_DB")
 			}
-		}(),
-		Port: func() int64 {
-			db_port, err := strconv.ParseInt(
-				utils.GetEnvWithDefault("POSTGRES_PORT", "5432"), 0, 64,
-			)
-			if db_port == 0 || err != nil {
-				return 5432
-			}
-			return db_port
 		}(),
 	}
 

@@ -58,6 +58,15 @@ func CreateContribution(c *fiber.Ctx) error {
 		return utils.NewError(c, 400, err)
 	}
 
+	errors := helpers.ValidateStruct(*json)
+	if errors != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(utils.JSONResult{
+			Code:    fiber.StatusBadRequest,
+			Message: "error",
+			Data:    errors,
+		})
+	}
+
 	newContriibution := table.Contribution{
 		GoalID: goal.ID,
 		Amount: json.Amount,

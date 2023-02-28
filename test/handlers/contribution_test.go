@@ -3,43 +3,101 @@ package handlers
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
-	"net/http/httptest"
+	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
 
-func (suite *HandlersTestSuite) TestGetContribution() {}
+func (suite *HandlersTestSuite) TestContribution() {
+	tests := []struct {
+		name                 string
+		method               string
+		url                  string
+		requestData          map[string]interface{}
+		expectedError        bool
+		expectedResponseData map[string]interface{}
+		expectedResponseCode int
+	}{
+		// Create Contribution
+		{
+			name:                 "TestCreateContribution: base",
+			method:               "POST",
+			url:                  "goal/1/contribution/",
+			requestData:          map[string]interface{}{"amount": 1.0},
+			expectedResponseCode: 200,
+			expectedResponseData: map[string]interface{}{
+				"code":    float64(200),
+				"message": "success",
+			},
+		},
+		{
+			name:                 "TestCreateContribution: empty request",
+			method:               "POST",
+			url:                  "goal/1/contribution/",
+			requestData:          nil,
+			expectedResponseCode: 400,
+			expectedResponseData: map[string]interface{}{
+				"code":    float64(400),
+				"message": "error",
+			},
+		},
 
-func (suite *HandlersTestSuite) TestGetContributions() {}
+		// Get Contributions
+		{
+			name:                 "TestGetContributions: base",
+			method:               "GET",
+			url:                  "goal/1/contribution/",
+			expectedResponseCode: 200,
+			expectedResponseData: map[string]interface{}{
+				"code":    float64(200),
+				"message": "success",
+			},
+		},
 
-func (suite *HandlersTestSuite) TestCreateContributions() {
-	goal_data, err := json.Marshal(map[string]interface{}{
-		"name":        "test 12edwqqdd",
-		"goal_amount": 1.0,
-		"target_date": "2024-04-20T00:00:00.511Z",
-	})
-	assert.NoError(suite.T(), err)
+		// Update Contribution
+		{
+			name:                 "TestUpdateContribution: base",
+			method:               "PUT",
+			url:                  "goal/1/contribution/1/",
+			requestData:          map[string]interface{}{"amount": float64(10.0)},
+			expectedResponseCode: 200,
+			expectedResponseData: map[string]interface{}{
+				"code":    float64(200),
+				"message": "success",
+				"data": map[string]interface{}{
+					"amount": float64(10.0),
+				},
+			},
+		},
 
-	contribution_data, err := json.Marshal(map[string]float32{"amount": 1.0})
-	assert.NoError(suite.T(), err)
+		// Delete Contribution
+		{
+			name:                 "TestDeleteContribution: base",
+			method:               "DELETE",
+			url:                  "goal/1/contribution/3/",
+			expectedResponseCode: 200,
+		},
+	}
+	for _, tt := range tests {
+		suite.T().Run(tt.name, func(t *testing.T) {
+			// Prepare request data (for POST, PUT)
+			data, err := json.Marshal(tt.requestData)
+			assert.NoError(suite.T(), err)
 
-	req := httptest.NewRequest("POST", "/api/v1/goal/", bytes.NewBuffer(goal_data))
-	req.Header.Set("Content-type", "application/json")
-	resp, _ := suite.App.Test(req)
-	assert.Equal(suite.T(), "200 OK", resp.Status)
-	fmt.Println(resp)
+			req := suite.Request(tt.method, tt.url, bytes.NewBuffer(data))
+			resp, err := suite.App.Test(req)
 
-	req = httptest.NewRequest("POST", "/api/v1/goal/1/contribution/", bytes.NewBuffer(contribution_data))
-	req.Header.Set("Content-type", "application/json")
+			// Verify, that no error occurred, that is not expected
+			assert.Equalf(suite.T(), tt.expectedError, err != nil, tt.name)
 
-	resp, _ = suite.App.Test(req)
-	assert.Equal(suite.T(), "200 OK", resp.Status)
+			// Verify, if the status code is as expected.
+			assert.Equalf(suite.T(), tt.expectedResponseCode, resp.StatusCode, tt.name)
 
-	defer resp.Body.Close()
-	defer req.Body.Close()
+			// Verify, that have key fields in response
+			CompareRRFieldEntry(suite.T(), tt.name, resp.Body, tt.expectedResponseData)
+
+			defer resp.Body.Close()
+			defer req.Body.Close()
+		})
+	}
 }
-
-func (suite *HandlersTestSuite) TestUpdateContributions() {}
-
-func (suite *HandlersTestSuite) TestDeleteContributions() {}

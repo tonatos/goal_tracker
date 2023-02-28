@@ -25,7 +25,7 @@ import (
 func GetGoal(c *fiber.Ctx) error {
 	goal, err := helpers.GetGoalById(c, database.DB, c.Params("id"))
 	if err != nil {
-		return err
+		return c.Status(err.Code).JSON(err)
 	}
 
 	var accumulatedAmount struct {
@@ -88,6 +88,15 @@ func CreateGoal(c *fiber.Ctx) error {
 	data := new(request.RequestCreateGoal)
 	if err := c.BodyParser(data); err != nil {
 		return utils.NewError(c, 400, err)
+	}
+
+	errors := helpers.ValidateStruct(*data)
+	if errors != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(utils.JSONResult{
+			Code:    fiber.StatusBadRequest,
+			Message: "error",
+			Data:    errors,
+		})
 	}
 
 	newGoal := table.Goal{

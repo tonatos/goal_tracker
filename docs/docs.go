@@ -524,6 +524,9 @@ const docTemplate = `{
     "definitions": {
         "request.RequestCreateContribution": {
             "type": "object",
+            "required": [
+                "amount"
+            ],
             "properties": {
                 "amount": {
                     "type": "number"
@@ -532,6 +535,11 @@ const docTemplate = `{
         },
         "request.RequestCreateGoal": {
             "type": "object",
+            "required": [
+                "goal_amount",
+                "name",
+                "target_date"
+            ],
             "properties": {
                 "goal_amount": {
                     "type": "number"
@@ -546,6 +554,9 @@ const docTemplate = `{
         },
         "request.RequestUpdateContribution": {
             "type": "object",
+            "required": [
+                "amount"
+            ],
             "properties": {
                 "amount": {
                     "type": "number"
