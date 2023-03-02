@@ -13,11 +13,9 @@ tasks:
       - air
 
   test:
-    env:
-      ENV: "test"
     cmds:
       - source .env
-      - go test ./test/... -count=1 -v
+      - ENV=test go test ./test/... -count=1 -v
 
   db:
     dir: '{{.USER_WORKING_DIR}}'

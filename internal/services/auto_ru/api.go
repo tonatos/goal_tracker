@@ -10,9 +10,12 @@ import (
 	"net/url"
 	"strconv"
 	"time"
+
+	"github.com/stretchr/testify/mock"
 )
 
 type AutoRUApi struct {
+	mock.Mock
 	BaseURL string
 	Headers map[string]string
 }
@@ -65,15 +68,15 @@ func (api *AutoRUApi) Request(method string, url *url.URL, data io.Reader) ([]by
 	return body, nil
 }
 
-func (api *AutoRUApi) BuildURL(urlName string) *url.URL {
-	baseUrl, _ := url.Parse(fmt.Sprintf("%s%s", api.BaseURL, urlName))
+func (api *AutoRUApi) BuildURL(path string) *url.URL {
+	baseUrl, _ := url.Parse(fmt.Sprintf("%s%s", api.BaseURL, path))
 	return baseUrl
 }
 
-func (api *AutoRUApi) Post(url *url.URL, data []byte) ([]byte, error) {
-	return api.Request(http.MethodPost, url, bytes.NewBuffer(data))
+func (api *AutoRUApi) Post(path *url.URL, data []byte) ([]byte, error) {
+	return api.Request(http.MethodPost, path, bytes.NewBuffer(data))
 }
 
-func (api *AutoRUApi) Get(url *url.URL) ([]byte, error) {
-	return api.Request(http.MethodGet, url, nil)
+func (api *AutoRUApi) Get(path *url.URL) ([]byte, error) {
+	return api.Request(http.MethodGet, path, nil)
 }

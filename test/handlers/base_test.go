@@ -10,10 +10,12 @@ import (
 
 	"github.com/stretchr/testify/suite"
 	"github.com/tonatos/goal-tracker/internal/app"
+	"github.com/tonatos/goal-tracker/internal/services/auto_ru"
 	"github.com/tonatos/goal-tracker/pkg/database"
 	"github.com/tonatos/goal-tracker/pkg/utils"
 	"github.com/tonatos/goal-tracker/test"
 	"github.com/tonatos/goal-tracker/test/fixtures"
+	"github.com/tonatos/goal-tracker/test/mocks"
 )
 
 func TestHandlersTestSuite(t *testing.T) {
@@ -42,6 +44,9 @@ func (suite *HandlersTestSuite) SetupSuite() {
 	goals := fixtures.GoalFixturesFabric().Items
 	suite.DB.Create(&goals)
 	suite.DB.Create(&fixtures.ContributionFixturesFabric(&goals[0]).Items)
+
+	// mock objects
+	auto_ru.AutoruObject = mocks.MockAutoruInit(mocks.MockAutoruApiInit(true), nil, 1000.0, 100.0)
 }
 
 func (suite *HandlersTestSuite) TearDownSuite() {

@@ -37,9 +37,9 @@ func GetGoal(c *fiber.Ctx) error {
 		&accumulatedAmount, table.Contribution{GoalID: goal.ID},
 	)
 
-	ar := auto_ru.AutoruInit(goal.GoalAmount, accumulatedAmount.Sum)
-	ads_count, _ := ar.CountAds()
-	catalog_link, _ := ar.GetCatalogLink()
+	auto_ru.AutoruSetupObject(goal.GoalAmount, accumulatedAmount.Sum)
+	ads_count, _ := auto_ru.AutoruObject.CountAds()
+	catalog_link, _ := auto_ru.AutoruObject.GetCatalogLink()
 
 	goal_response := response.ResponesGoal{
 		Goal:              goal,

@@ -60,7 +60,6 @@ func (ar *AutoRU) CountAds() (int, error) {
 
 	var responseObject []AutoRUCountAdsResponse
 	json.Unmarshal(data, &responseObject)
-
 	if len(responseObject) == 0 {
 		return 0, nil
 	}
@@ -115,11 +114,10 @@ func (ar *AutoRU) GetCatalogLink() (string, error) {
 	return baseUrl.String(), nil
 }
 
-func AutoruInit(goal_amount, accumulatedAmount float32) *AutoRU {
+func AutoruInit() {
 	cookie := os.Getenv("APP_AUTORU_COOKIE")
 
-	return &AutoRU{
-		Amount: goal_amount,
+	AutoruObject = &AutoRU{
 		Urls: AutoRUApiURLs{
 			ApiAdsCount: "/-/ajax/desktop/getListingLocatorCountersTotalCount/",
 			ApiCatalog:  "/-/ajax/desktop/listing/",
@@ -131,7 +129,6 @@ func AutoruInit(goal_amount, accumulatedAmount float32) *AutoRU {
 			Category:     "cars",
 			GeoRadius:    1000,
 			GeoID:        54,
-			PriceTo:      goal_amount,
 			CatalogFilter: []map[string]string{
 				{"mark": "CHEVROLET", "model": "CAMARO"},
 				{"mark": "FORD", "model": "MUSTANG"},
@@ -149,3 +146,10 @@ func AutoruInit(goal_amount, accumulatedAmount float32) *AutoRU {
 		},
 	}
 }
+
+func AutoruSetupObject(goal_amount, accumulatedAmount float32) {
+	AutoruObject.Amount = goal_amount
+	AutoruObject.FilterParams.PriceTo = accumulatedAmount
+}
+
+var AutoruObject *AutoRU

@@ -7,6 +7,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 
 	"github.com/tonatos/goal-tracker/internal/app/routes"
+	"github.com/tonatos/goal-tracker/internal/services/auto_ru"
 	"github.com/tonatos/goal-tracker/pkg/database"
 	"github.com/tonatos/goal-tracker/pkg/utils"
 )
@@ -68,6 +69,8 @@ func SetupInit() *fiber.App {
 
 	// initialize routes
 	initRoutes(app)
+
+	auto_ru.AutoruInit()
 
 	return app
 }
