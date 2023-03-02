@@ -10,12 +10,6 @@ import (
 	"github.com/tonatos/goal-tracker/test/mocks"
 )
 
-type postError struct{}
-
-func (e *postError) Error() string {
-	return "Error"
-}
-
 func (suite *ServicesTestSuite) TestAutoRUAdapter() {
 
 	tests := []struct {
