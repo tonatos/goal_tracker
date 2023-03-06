@@ -1,0 +1,14 @@
+.App {
+    background: #efefef;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+}
+.App .Header {
+    text-align: center;
+}
+.App .Logo {}
+.App .Text {
+    font-size: 16px;
+}
