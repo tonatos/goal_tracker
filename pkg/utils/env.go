@@ -1,9 +1,13 @@
 package utils
 
-import "os"
+import (
+	"fmt"
+	"os"
+)
 
 func GetCurrentEnv() string {
 	var env string
+	fmt.Printf(os.Getenv("ENV"))
 	switch os.Getenv("ENV") {
 	case "prod", "stage":
 		env = "prod"

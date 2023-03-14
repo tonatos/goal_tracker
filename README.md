@@ -41,9 +41,14 @@ export $(cat .env) | ENV=test go test ./test/... -count=1 -v
 Либо: `task test`
 
 #### Frontend:
+**Установка:**
+```sh
+cd ./website && yarn install
+```
+
 **Запуск:**
 ```sh
-cd ./website && npm run start
+npm run start
 ```
 
 ## Task-runner

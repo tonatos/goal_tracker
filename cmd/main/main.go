@@ -7,6 +7,8 @@ import (
 	"github.com/tonatos/goal-tracker/internal/app"
 	"github.com/tonatos/goal-tracker/pkg/database"
 	"github.com/tonatos/goal-tracker/pkg/utils"
+
+	_ "github.com/tonatos/goal-tracker/docs"
 )
 
 // @title           GoalTracker API
