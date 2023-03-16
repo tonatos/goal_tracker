@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/cors"
 
 	"github.com/tonatos/goal-tracker/internal/app/routes"
 	"github.com/tonatos/goal-tracker/internal/services/auto_ru"
@@ -60,6 +61,12 @@ func initRoutes(app *fiber.App) {
 
 func SetupInit() *fiber.App {
 	app := fiber.New()
+
+	app.Use(cors.New(cors.Config{
+		AllowOrigins:     "*",
+		AllowHeaders:     "",
+		AllowCredentials: true,
+	}))
 
 	// initialize database
 	initDatabase()

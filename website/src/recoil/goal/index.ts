@@ -1,3 +1,2 @@
-import atom from "./atom"
-
-export default atom
+export { currentGoalAtom, goalsAtom } from "./atom"
+export { goalsListQuery, goalInfoQuery } from "./selector"

@@ -19,6 +19,8 @@ source .env
 docker-compose up
 ```
 
+Swagger будет доступен по ссылке [http://127.0.0.1:8000/api/v1/docs/index.html](http://127.0.0.1:8000/api/v1/docs/index.html).
+
 ### Запуск в режиме разработки:
 #### Backend:
 **Запуск:**
