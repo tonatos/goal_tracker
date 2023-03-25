@@ -1,0 +1,29 @@
+ARG NODE_VERSION
+
+# stage 1: build app
+FROM node:${NODE_VERSION}-alpine as builder
+LABEL maintainer="tonatossn@gmail.com"
+
+ARG REACT_APP_API_URL
+ENV REACT_APP_API_URL ${REACT_APP_API_URL}
+
+WORKDIR /app
+
+COPY ./website/package.json ./website/yarn.lock ./
+RUN yarn
+
+COPY ./website ./
+RUN yarn build
+
+# stage 2: lightweight image for run
+FROM node:${NODE_VERSION}-alpine as production
+LABEL maintainer="tonatossn@gmail.com"
+
+ARG FRONT_PORT=3000
+
+WORKDIR /app
+COPY --from=builder /app/build ./build
+RUN yarn global add local-web-server
+
+EXPOSE $FRONT_PORT
+CMD [ "sh", "-c", "ws --directory ./build --port ${FRONT_PORT}" ]

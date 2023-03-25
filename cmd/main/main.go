@@ -29,7 +29,7 @@ func main() {
 
 	log.Fatal(
 		application.Listen(
-			fmt.Sprintf(":%s", utils.GetEnvWithDefault("APP_PORT", "8000")),
+			fmt.Sprintf(":%s", utils.GetEnvWithDefault("API_PORT", "8000")),
 		),
 	)
 }

@@ -115,7 +115,7 @@ func (ar *AutoRU) GetCatalogLink() (string, error) {
 }
 
 func AutoruInit() {
-	cookie := os.Getenv("APP_AUTORU_COOKIE")
+	cookie := os.Getenv("API_AUTORU_COOKIE")
 
 	AutoruObject = &AutoRU{
 		Urls: AutoRUApiURLs{

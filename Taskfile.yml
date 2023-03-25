@@ -3,14 +3,25 @@ version: '3'
 dotenv: ['.env',]
 
 tasks:
+  build_env:
+    internal: true
+    cmds:
+      - cp -n .env.example .env || true
+      - source .env
+
   run:
     dir: './'
     cmds:
-      - cp -n .env.example .env || true
+      - task: build_env
       - docker-compose up -d db redis
-      - source .env
       - swag init -g ./cmd/main/main.go --dir ./ --output ./docs
       - air
+
+  front:
+    dir: './website'
+    cmds:
+      - task: build_env
+      - npm run start
 
   test:
     cmds:

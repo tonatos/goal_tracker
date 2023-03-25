@@ -1,8 +1,8 @@
 # stage 1: build app
-ARG APP_PORT
 FROM golang:1.20.1-alpine3.17 as builder
+LABEL maintainer="tonatossn@gmail.com"
 
-ENV APP_PORT=${APP_PORT}
+ARG API_PORT=8000
 
 WORKDIR /usr/src/app
 COPY go.mod go.sum ./
@@ -12,15 +12,15 @@ COPY . .
 RUN go build -o /usr/local/bin/app ./cmd/main/main.go
 
 # stage 2: lightweight image for run
-ARG APP_PORT
 FROM alpine
+LABEL maintainer="tonatossn@gmail.com"
+
+ARG API_PORT=8000
 
 WORKDIR /usr/src/app
 COPY --from=builder /usr/local/bin/app ./goal-tracker
 COPY --from=builder /usr/src/app/docs ./docs
 RUN chmod +x ./goal-tracker
 
-ENV APP_PORT=${APP_PORT}
-
-EXPOSE ${APP_PORT}
+EXPOSE $API_PORT
 CMD ["/usr/src/app/goal-tracker"]
