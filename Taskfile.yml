@@ -9,7 +9,7 @@ tasks:
       - cp -n .env.example .env || true
       - source .env
 
-  run:
+  run_api:
     dir: './'
     cmds:
       - task: build_env
@@ -17,18 +17,18 @@ tasks:
       - swag init -g ./cmd/main/main.go --dir ./ --output ./docs
       - air
 
-  front:
+  run_front:
     dir: './website'
     cmds:
       - task: build_env
       - npm run start
 
-  test:
+  test_api:
     cmds:
-      - source .env
+      - task: build_env
       - ENV=test go test ./test/... -count=1 -v
 
-  db:
+  db_shell:
     dir: '{{.USER_WORKING_DIR}}'
     cmds:
       - docker-compose up -d db && docker-compose exec db psql $POSTGRES_DB -U $POSTGRES_USER

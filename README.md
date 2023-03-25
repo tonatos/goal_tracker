@@ -1,8 +1,15 @@
 # GoalTracker
 
-Простой учебный pet-проект на `go` и `React`. Структура:
-* `./pkg` — бек
+Простой учебный pet-проект на `go` (Fiber) и `TypeScript` (React). Структура:
+* `./build` — докер-файл
+* `./cmd` — инициализация приложения
+* `./docs` — сваггер-схема
+* `./internal` — доменный код
+* `./pkg` — код контура окружения и утилиты
+* `./test` — тесты бекенда
 * `./website` — фронт
+
+Основано на [project-layout](https://github.com/golang-standards/project-layout).
 
 ## Конфигурация
 Для начала, необходим сделать `.env` файл:
@@ -26,9 +33,9 @@ Swagger будет доступен по ссылке [http://127.0.0.1:8000/api
 **Запуск:**
 ```sh
 docker-compose up -d db redis
-cd ./pkg && air
+air
 ```
-Либо: `task run`
+Либо: `task run_api`
 
 **Генерация/актуализация swagger-документации:**
 ```sh
@@ -40,7 +47,7 @@ swag init -g ./cmd/main/main.go --dir ./ --output ./docs
 docker-compose up -d db redis
 export $(cat .env) | ENV=test go test ./test/... -count=1 -v
 ```
-Либо: `task test`
+Либо: `task test_back`
 
 #### Frontend:
 **Установка:**
@@ -52,7 +59,7 @@ cd ./website && yarn install
 ```sh
 npm run start
 ```
-Либо: `task front`
+Либо: `task run_front`
 
 ## Task-runner
 В качестве task runner в проекте используется [go-task](https://taskfile.dev). [Установка](https://taskfile.dev/installation/) и использование:
@@ -62,9 +69,10 @@ task TASK_NAME
 ```
 
 ### Доступные команды
-* `run` запуск бекенда
-* `test` локальные тесты
-* `db` консоль базы данных
+* `run_api` запуск бекенда
+* `run_front` запуск фронта
+* `test_api` локальные тесты
+* `db_shell` консоль базы данных
 * `drop_db` удаление базы данных
   
 ## @todo
