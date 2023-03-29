@@ -27,6 +27,7 @@ func (suite *HandlersTestSuite) TestGoal() {
 				"name":        "test goal #1",
 				"goal_amount": 1.0,
 				"target_date": "2024-04-20T00:00:00.511Z",
+				"image":       "tst.png",
 			},
 			expectedResponseCode: 200,
 			expectedResponseData: map[string]interface{}{

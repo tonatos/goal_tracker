@@ -2,13 +2,20 @@
     background: #fff;
     display: flex;
     flex-direction: column;
-    justify-content: space-around;
+    justify-content: space-between;
     min-height: 100vh;
     width: 100vw;
     max-width: 940px;
     margin: auto;
+    z-index: -1;
 }
 
+.App .Header {
+    min-height: 50px;
+    position: absolute;
+    width: 100%;
+    left: 0;
+}
 .App .Timeline {
     flex-grow: 2;
     display: flex;
@@ -21,4 +28,13 @@
     align-items: center;
     justify-content: center;
     min-height: 150px;
+}
+.App .EmptyGoal {
+    display: flex;
+    flex: 1;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    font-size: 72px;
+    font-weight: bold;
 }

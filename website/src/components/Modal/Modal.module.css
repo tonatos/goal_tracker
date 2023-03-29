@@ -1,0 +1,42 @@
+.Modal {
+    width: 100%;
+    height: 100%;
+}
+.ModalOverlay {
+    background: rgba(255,255,255, 0.8);
+    display: flex;
+    position: absolute;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    z-index: 100;
+}
+.ModalContainer {
+    max-width: 800px;
+    width: 100vw;
+    min-height: 180px;
+    background: #fff;
+    border-radius: 8px;
+    border: 3px solid #16B0E4;
+    padding: 20px 40px;
+    background: #FFFFFF;
+    box-shadow: 0 8px 18px 0 rgba(0,0,0,0.17);
+}
+.ModalHeader {
+    display: flex;
+    justify-content: space-between;
+    position: relative;
+}
+.ModalHeader h2 {
+    font-size: 44px;
+    font-weight: bold;
+    margin: 0 0 20px;
+}
+.ModalClose {
+    display: block;
+    cursor: pointer;
+    position: absolute;
+    right: -20px;
+    z-index: 10;
+}

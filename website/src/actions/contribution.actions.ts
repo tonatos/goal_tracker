@@ -1,6 +1,6 @@
 import { useRecoilState } from "recoil";
 import { useFetchWrapper } from "../helpers";
-import Contribution from "../interfaces/contribution.interfaces";
+import { Contribution } from "../interfaces/contribution.interfaces";
 import { contributionsAtom } from "../recoil/contribution";
 
 export const useContributionActions = () => {
@@ -9,7 +9,7 @@ export const useContributionActions = () => {
     const [contributions, setContributions] = useRecoilState(contributionsAtom);
 
     const getAll = async (goalId: number) => {
-        const contributions = await fetchWrapper.get(`${baseUrl}/${goalId}`, null);
+        const contributions = await fetchWrapper.get(`${baseUrl}/${goalId}`);
         return setContributions(contributions);
     }
 

@@ -519,6 +519,47 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/v1/upload/": {
+            "post": {
+                "description": "Upload image for goal",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Upload"
+                ],
+                "summary": "Upload Image",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Image file",
+                        "name": "image",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "ok",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -544,6 +585,9 @@ const docTemplate = `{
                 "goal_amount": {
                     "type": "number"
                 },
+                "image": {
+                    "type": "string"
+                },
                 "name": {
                     "type": "string"
                 },
@@ -568,6 +612,9 @@ const docTemplate = `{
             "properties": {
                 "goal_amount": {
                     "type": "number"
+                },
+                "image": {
+                    "type": "string"
                 },
                 "name": {
                     "type": "string"
@@ -614,6 +661,9 @@ const docTemplate = `{
                 },
                 "id": {
                     "type": "integer"
+                },
+                "image": {
+                    "type": "string"
                 },
                 "name": {
                     "type": "string"

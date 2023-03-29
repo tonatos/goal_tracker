@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { currentGoalAtom } from '../../recoil/goal';
-import Contribution from "../../interfaces/contribution.interfaces";
 import styles from './AddContribution.module.css';
 import { useContributionActions } from '../../actions/contribution.actions';
 import { useGoalActions } from '../../actions/goal.actions';
@@ -37,7 +36,6 @@ export const AddContribution = ({}) => {
         <div className={`${styles.AddContribution} ${showError ? styles.Error : ''}`}>
             <form className={styles.Form} onSubmit={(e) => {addContribution(); e.preventDefault();}}>
                 <div className={styles.Input}>
-                    
                     <input
                         name="contribution"
                         type="number"
@@ -47,6 +45,7 @@ export const AddContribution = ({}) => {
                 </div>
                 <button className={styles.Button} type="submit">Внести</button>
             </form>
+            <a href="#" className={styles.ContributionList}>Список взносов</a>
         </div>
     )
 }

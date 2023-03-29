@@ -1,17 +1,23 @@
 export const useFetchWrapper = () => {
     const request = (method: string) => {
-        return async (url: string, body: object | null) => {
+        return async (url: string, body?: FormData | object, headers?: object) => {
             const requestOptions: RequestInit = {
                 method,
-                headers: {
-                    'Content-Type': 'application/json'
-                },
+                headers: headers ? headers : {},
                 body,
             } as RequestInit;
 
-            if (body) {
-                requestOptions.body = JSON.stringify(body);
+            if (!(body instanceof FormData)) {
+                requestOptions.headers = {
+                    ...requestOptions.headers,
+                    'Content-Type': 'application/json',
+                }
             }
+
+            if (body) {
+                requestOptions.body = body instanceof FormData ? body : JSON.stringify(body);
+            }
+            
             const response = await fetch(url, requestOptions);
             return handleResponse(response);
         }
@@ -22,7 +28,11 @@ export const useFetchWrapper = () => {
         const text = await response.text();
         const data = text && JSON.parse(text);
         if (!response.ok) {
-            const error = (data && data.message) || response.statusText;
+            // if (response.status < 500) {
+            //     return data;
+            // }
+
+            const error = data || response.statusText;
             return Promise.reject(error);
         }
         return data;

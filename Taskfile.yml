@@ -7,6 +7,7 @@ tasks:
     internal: true
     cmds:
       - cp -n .env.example .env || true
+      - ln -sf $(PWD)/.env $(PWD)/website/.env
       - source .env
 
   run_api:
@@ -21,7 +22,8 @@ tasks:
     dir: './website'
     cmds:
       - task: build_env
-      - npm run start
+      - echo $PUBLIC_URL
+      - PUBLIC_URL=$PUBLIC_URL npm run start
 
   test_api:
     cmds:

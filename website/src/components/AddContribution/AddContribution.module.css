@@ -1,5 +1,5 @@
 .AddContribution {
-    display: flex;
+    text-align: center;
 }
 .AddContribution .Button {
     height: 54px;
@@ -24,6 +24,7 @@
 }
 .AddContribution .Form {
     display: flex;
+    margin-bottom: 12px;
 }
 .AddContribution .Input {
     display: inline-block;

@@ -1,0 +1,137 @@
+.Input {
+    position: relative;
+    margin: 0 40px 0 0;
+    width: 100%;
+}
+.Input:last-child {
+    margin: 0;
+}
+.InputLabel {
+    display: block;
+    font-size: 18px;
+    font-weight: bold;
+    color: rgba(0,0,0,0.12);
+}
+.InputInput,
+.InputInputLarge {
+    box-sizing: border-box;
+    width: 100%;
+    border: 0;
+}
+.InputInput {
+    background: #F7F7F7;
+    height: 54px;
+    font-size: 22px;
+    padding: 0 12px;
+    color: #000;
+    font-family: Kanit;
+    font-weight: 500;
+    border-radius: 4px;
+    transition: all .5s;
+}
+.InputInput::-webkit-outer-spin-button,
+.InputInput::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.InputInput:focus {
+    outline-color: #16B0E3;
+}
+.InputInput::placeholder {
+    color: #999;
+}
+
+.InputInputLarge {
+    font-size: 44px;
+    font-weight: bold;
+    line-height: 72px;
+    background: none;
+}
+.InputInputLarge:focus {
+    outline: none;
+}
+.InputInputLarge::placeholder {
+    color: #999;
+}
+
+.Input--Icon .InputInput {
+    padding-left: 40px;
+}
+.Input--date {}
+.Input--currency {}
+.Input--currency:after {
+    content: '₽';
+    position: absolute;
+    width: 30px;
+    line-height: 54px;
+    right: 10px;
+    text-align: center;
+    font-family: Kanit;
+    font-size: 22px;
+    color: #000;
+    font-weight: medium;
+}
+
+.InputIcon {
+    position: absolute;
+    width: 44px;
+    height: 54px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1;
+}
+
+
+.Button .ButtonButton,
+.ButtonCancel .ButtonButton {
+    height: 54px;
+    padding: 0 24px;
+    font-family: "PT Sans";
+    font-size: 22px;
+    font-weight: bold;
+    position: relative;
+    border: none;
+    border-radius: 8px;
+    line-height: 20px;
+    transition: all .2s ease;
+    display: flex;
+    align-items: center;
+}
+
+.Button {}
+.Button .ButtonButton {
+    color: #fff;
+    background-color: #16B0E3;
+    background: #16B0E3;
+    background-image: linear-gradient(238deg, rgba(13,207,171,0.00) 4%, #0DCFAB 100%);
+    outline: none;
+}
+.Button .ButtonButton:active {
+    box-shadow: inset 0px 6px rgba(0,0,0 .8);
+    background-color: #0DCFAB;
+    box-shadow: inset 0px 3px 15px rgba(0,0,0, .2);
+}
+.Button .ButtonButton:disabled {
+    background: #afafaf;
+}
+.ButtonCancel {}
+.ButtonCancel .ButtonButton {
+    background: #fff;
+    padding: 0 16px;
+    border: 3px solid #EA0D07;
+    color: #EA0D07;
+}
+.ButtonCancel .ButtonButton:active {
+    background: #EA0D07;
+    color: #fff;
+}
+.ButtonCancel .ButtonButton:disabled {
+    background: #fff;
+    border: 3px solid #afafaf;
+    color: #afafaf;
+}
+.ButtonIcon {
+    margin-right: 8px;
+    line-height: 0px;
+}

@@ -55,8 +55,10 @@ func initRedis() {
 func initRoutes(app *fiber.App) {
 	routes.GoalRoutes(app)
 	routes.ContributionRoutes(app)
+	routes.UploadRoutes(app)
 	routes.DocsRoutes(app)
 	routes.NotFoundRoutes(app)
+	app.Static("/public/", "./public")
 }
 
 func SetupInit() *fiber.App {

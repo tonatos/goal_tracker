@@ -1,3 +1,2 @@
-import { useFetchWrapper } from "./fetch";
-
-export { useFetchWrapper };
+export { useFetchWrapper } from "./fetch";
+export { getImagePath } from "./path";

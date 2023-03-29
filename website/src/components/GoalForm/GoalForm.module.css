@@ -1,0 +1,17 @@
+.FormRow {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-bottom: 30px;
+}
+
+.Error {
+    border-radius: 8px;
+    width: 100%;
+    background: #EA0D07;
+    color: #fff;
+    padding: 12px 24px;
+}
+.Error h3 {
+    margin: 0 0 8px;
+}

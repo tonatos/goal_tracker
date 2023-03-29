@@ -1,14 +1,17 @@
+import { useState, useRef, useEffect, useLayoutEffect } from 'react';
+
 import StartPointImage from '../../assets/StartPoint.png';
 import FinishPointImage from '../../assets/FinishPoint.png';
 import CursorIcon from '../../assets/CursorIcon.svg';
 import styles from './Timeline.module.css'
 
-import { useRecoilValue } from 'recoil';
-import { useState, useRef, useEffect, useLayoutEffect } from 'react';
 import CurrencyFormat from 'react-currency-format';
-import { currentGoalAtom, goalInfoQuery, goalsListQuery } from '../../recoil/goal';
+import { Goal } from "../../interfaces/goal.interfaces";
+import { getImagePath } from '../../helpers';
 
-
+interface TimelineProp {
+    currentGoal: Goal
+}
 
 interface CursorProp {
     link: string,
@@ -21,10 +24,11 @@ interface CursorProp {
     leftOffset: number
 }
 
-interface FinishPoint {
+interface FinishPointProp {
     goalAmount: number,
     containerWidth: number,
     leftOffset: number
+    image: string,
 }
 
 const FormatCurrency = (prop: { num: number }) => {
@@ -42,19 +46,20 @@ const FormatCurrency = (prop: { num: number }) => {
     )
 }
 
-const StartPoint = ({}) => {
+const StartPoint = (props: {image: string}) => {
     return (
         <div className={styles.StartPoint}>
             <img src={StartPointImage} className={styles.Image} />
+            <img src={getImagePath(props.image)} className={styles.GoalImage} />
         </div>
     )
 }
 
-const FinishPoint = (prop: FinishPoint) => {
+const FinishPoint = (props: FinishPointProp) => {
     const goalAmountRef = useRef<SVGTextElement | null>(null);
     const calculateGradientPoint = (): number => {
         const goalAmountRect = goalAmountRef?.current?.getBoundingClientRect() || {} as DOMRect;
-        const cursorPosition = prop.containerWidth - prop.leftOffset;
+        const cursorPosition = props.containerWidth - props.leftOffset;
         
         if (cursorPosition < goalAmountRect.width) {
             return (goalAmountRect.width - cursorPosition) / (goalAmountRect.width / 100) / 100;
@@ -64,9 +69,9 @@ const FinishPoint = (prop: FinishPoint) => {
     }
     return (
         <div className={styles.FinishPoint}>
-            <img src={FinishPointImage} className={styles.Image} />
+            <img src={getImagePath(props.image)} className={styles.Image} />
             <div className={styles.FinishAmountContainer}>
-                {prop.goalAmount ? 
+                {props.goalAmount ? 
                 <svg xmlns="http://www.w3.org/2000/svg" width="340" height="90">
                     <defs>
                         <linearGradient id="gradient" x1="-0.04" x2="1.04">
@@ -81,7 +86,7 @@ const FinishPoint = (prop: FinishPoint) => {
                         textAnchor="middle"
                         x="50%" y="50%"
                         className={styles.FinishAmount}>
-                        <FormatCurrency num={prop.goalAmount} />
+                        <FormatCurrency num={props.goalAmount} />
                     </text>
                 </svg>
                 : <></>}
@@ -123,8 +128,7 @@ const Cursor = (prop: CursorProp) => {
     )
 }
 
-export const Timeline = ({ }) => {
-    const currentGoal = useRecoilValue(currentGoalAtom);
+export const Timeline = (prop: TimelineProp) => {
     const [percent, setPercent] = useState<number>(0);
 
     const timelineRef = useRef<HTMLInputElement | null>(null);
@@ -142,10 +146,10 @@ export const Timeline = ({ }) => {
 
     useEffect(() => {
         const persent = Math.round(
-            (100 / currentGoal.goal_amount) * (currentGoal.accumulated_amount || 1) * 100
+            (100 / prop.currentGoal.goal_amount) * (prop.currentGoal.accumulated_amount || 1) * 100
         ) / 100;
         setPercent(persent)
-    }, [currentGoal]);
+    }, [prop.currentGoal]);
 
     useLayoutEffect(() => {
         const updateTimelineSize = () => {
@@ -154,24 +158,25 @@ export const Timeline = ({ }) => {
         window.addEventListener('resize', updateTimelineSize);
         return () => window.removeEventListener('resize', updateTimelineSize);
     }, [])
-
+    
     return (
         <div className={styles.Timeline} ref={timelineRef}>
             <Cursor
                 percent={percent || 0}
                 containerWidth={timelineRef?.current?.getBoundingClientRect().width || 0}
                 leftOffset={calculateProgressWidth(percent, false)}
-                accumulatedAmount={currentGoal.accumulated_amount || 0}
-                daysUntilBang={currentGoal.days_until_bang || 0}
-                adsByCurrentAmount={currentGoal.ads_by_amount || 0}
-                link={currentGoal.catalog_url || ''}
-                goalAmount={currentGoal.goal_amount}
+                accumulatedAmount={prop.currentGoal.accumulated_amount || 0}
+                daysUntilBang={prop.currentGoal.days_until_bang || 0}
+                adsByCurrentAmount={prop.currentGoal.ads_by_amount || 0}
+                link={prop.currentGoal.catalog_url || ''}
+                goalAmount={prop.currentGoal.goal_amount}
             />
 
             <div className={styles.TimelineStartFinishContainer}>
-                <StartPoint />
+                <StartPoint image={prop.currentGoal.image} />
                 <FinishPoint
-                    goalAmount={currentGoal.goal_amount}
+                    image={prop.currentGoal.image}
+                    goalAmount={prop.currentGoal.goal_amount}
                     containerWidth={timelineRef?.current?.getBoundingClientRect().width || 0}
                     leftOffset={calculateProgressWidth(percent, false)}
                 />

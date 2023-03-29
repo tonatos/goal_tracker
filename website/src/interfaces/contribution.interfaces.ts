@@ -1,4 +1,4 @@
-export default interface Contribution {
+export interface Contribution {
     id?: number,
     amount: number,
     created_at?: Date,

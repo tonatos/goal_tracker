@@ -1,0 +1,79 @@
+.ImageUpload {
+    display: flex;
+    height: 160px;
+    box-sizing: border-box;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    border: 3px dashed #EBEBEB;
+    border-radius: 8px;
+    padding: 0 20%;
+    transition: .2s all;
+    cursor: pointer;
+}
+.ImageUpload:hover {
+    background: #fafafa;
+}
+.ImageUploadActive {
+    background: #F2FCFF;
+}
+.ImageUploadUploaded {
+    background: #fff;
+    border-color: #fff;
+}
+/* .ImageUploadActive * {
+    display: none;
+} */
+.ImageUploadIcon {
+    margin-right: 24px;
+}
+.ImageUploadText {}
+.ImageUploadHeader {
+    font-size: 18px;
+    color: #000000;
+    margin: 0 0 8px;
+}
+.ImageUploadHelptext {
+    font-size: 18px;
+    color: #E0E0E0;
+    font-weight: bold;
+    margin: 0;
+}
+.ImageUploadInput {
+    position: absolute;
+    z-index: -1;
+}
+.ImageUploadUploadedContainer {
+    position: relative;
+    z-index: 1;
+}
+.ImageUploadBackgroundText {
+    position: absolute;
+    font-size: 98px;
+    margin: 0;
+    line-height: 70px;
+    font-weight: bold;
+    color: rgba(0,0,0, 0.1)
+}
+.ImageUploadRemove {
+    position: absolute;
+    display: flex;
+    border-radius: 32px;
+    width: 32px;
+    height: 32px;
+    background: #fff;
+    color: #EA0D07;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 12px 12px rgba(0,0,0, .4);
+    right: -16px;
+    top: -16px;
+}
+.ImageUploadRemove:hover {
+    background-color: #EA0D07;
+    color: #fff;
+}
+.ImageUploadImage {
+    height: 140px;
+}

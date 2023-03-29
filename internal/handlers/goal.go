@@ -104,6 +104,7 @@ func CreateGoal(c *fiber.Ctx) error {
 		Slug:       utils.Slugificator(data.Name),
 		GoalAmount: data.GoalAmount,
 		TargetDate: data.TargetDate,
+		Image:      data.Image,
 	}
 
 	err := database.DB.Create(&newGoal).Error

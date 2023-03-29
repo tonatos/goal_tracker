@@ -1,5 +1,5 @@
 import { atom } from "recoil"
-import Goal from "../../interfaces/goal.interfaces";
+import { Goal } from "../../interfaces/goal.interfaces";
 
 export const goalsAtom = atom<Goal[]>({
     key: "goalsAtom",
